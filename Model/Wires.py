@@ -1,9 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-
+import os
+import sys
+curPath = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(curPath)
+from Node import Node
+from Lump import Component
 
 class Wire:
-    def __init__(self, name, node1, node2, offset, r, R, l, sig, mur, epr, VF):
+    def __init__(self, name: str, node1: Node, node2: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int):
         """
         初始化管状线段对象
         
@@ -43,7 +48,7 @@ class Wire:
 
 
 class TubeWire(Wire):
-    def __init__(self, name, node1, node2, offset, r, R, l, sig, mur, epr, VF, outer_radius, overall_outer_radius, inner_radius, inner_offset, inner_angle):
+    def __init__(self, name: str, node1: Node, node2: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int, outer_radius: float, overall_outer_radius: float, inner_radius: float, inner_offset: float, inner_angle: float):
         """
         初始化管状线段对象。
         
@@ -86,6 +91,28 @@ class OHLWire(Wire):
         self.Cir_No = Cir_No
         self.Phase = Phase
         self.phase = phase
+
+
+class LumpWire(Wire):
+    def __init__(self, name, node1, node2, offset, r, R, l, sig, mur, epr, VF):
+        """
+        初始化管状线段对象。
+        
+        继承自Wire类,并添加以下参数:
+        component(list):表示当前导线上的集中参数元件。
+
+        """
+        super().__init__(name, node1, node2, offset, r, R, l, sig, mur, epr, VF)
+        self.components = []
+
+    def add_component(self, component: Component):
+        """
+        将一个基础元件添加到该导线上。
+
+        Args:
+            component (Component): 要添加的基础元件对象。
+        """
+        self.components.append(component)
 
 
 class Wires:
@@ -188,6 +215,39 @@ class Wires:
                                 (wire.node2.x, wire.node2.y, wire.node2.z)])
 
         return coordinates
+    
+
+    def get_bran_coordinates(self):
+        """
+        返回按照下列格式所有线段（支路）的信息汇总列表：【线段名，起始节点名，终止节点名】,按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        coordinates (list): 结点坐标列表,每个元素为(x, y, z)
+        """
+        coordinates = []
+
+        # 处理空气线段
+        for wire in self.air_wires:
+            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+
+        # 处理地线段
+        for wire in self.ground_wires:
+            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+
+        # 处理管状线段
+        for wire in self.tube_wires:
+            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+
+        # 处理空气到地线段
+        for wire in self.a2g_wires:
+            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+
+        # 处理短路线段
+        for wire in self.short_wires:
+            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+
+        return coordinates
+
 
     def __repr__(self):
         return f"Wires(air_wires={self.air_wires}, ground_wires={self.ground_wires}, a2g_wires={self.a2g_wires}, short_wires={self.short_wires}, tube_wires={self.tube_wires})"
