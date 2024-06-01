@@ -37,13 +37,13 @@ class TestNodeWire(unittest.TestCase):
 
     def test_wire_initialization(self):
         # 测试Wire类的初始化
-        node1 = Node("X01", 0, 0, 0)
-        node2 = Node("X02", 2, 0, 0)
-        wire = Wire("Test Wire", node1, node2, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, None)
+        start_node = Node("X01", 0, 0, 0)
+        end_node = Node("X02", 2, 0, 0)
+        wire = Wire("Test Wire", start_node, end_node, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, None)
 
         self.assertEqual(wire.name, "Test Wire")
-        self.assertEqual(wire.node1, node1)
-        self.assertEqual(wire.node2, node2)
+        self.assertEqual(wire.start_node, start_node)
+        self.assertEqual(wire.end_node, end_node)
         self.assertEqual(wire.r, 1.0)
         self.assertEqual(wire.R, 2.0)
         self.assertEqual(wire.L, 3.0)
@@ -58,13 +58,13 @@ class TestNodeWire(unittest.TestCase):
 
     def test_tube_wire_initialization(self):
         # 测试TubeWire类的初始化
-        node1 = Node("Node A", 10.5, 20.3, 15.7)
-        node2 = Node("Node B", -5.2, 8.9, 2.1)
-        tube_wire = TubeWire("Test Tube Wire", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        start_node = Node("Node A", 10.5, 20.3, 15.7)
+        end_node = Node("Node B", -5.2, 8.9, 2.1)
+        tube_wire = TubeWire("Test Tube Wire", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         self.assertEqual(tube_wire.name, "Test Tube Wire")
-        self.assertEqual(tube_wire.node1, node1)
-        self.assertEqual(tube_wire.node2, node2)
+        self.assertEqual(tube_wire.start_node, start_node)
+        self.assertEqual(tube_wire.end_node, end_node)
         self.assertEqual(tube_wire.r, 0.5)
         self.assertEqual(tube_wire.R, 10.0)
         self.assertEqual(tube_wire.L, 1e-9)
@@ -83,10 +83,10 @@ class TestNodeWire(unittest.TestCase):
 
     def test_wires_initialization(self):
         # 创建测试数据
-        node1 = Node("Node A", 10.5, 20.3, 15.7)
-        node2 = Node("Node B", -5.2, 8.9, 2.1)
-        air_wire = Wire("Air Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
-        tube_wire = TubeWire("Tube Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        start_node = Node("Node A", 10.5, 20.3, 15.7)
+        end_node = Node("Node B", -5.2, 8.9, 2.1)
+        air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        tube_wire = TubeWire("Tube Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         # 测试默认初始化
         wires = Wires()
@@ -107,11 +107,11 @@ class TestNodeWire(unittest.TestCase):
 
     def test_Wires_method(self):
         # 创建测试数据
-        node1 = Node("X01", 10.5, 20.3, 15.7)
-        node2 = Node("X02", -5.2, 8.9, 2.1)
+        start_node = Node("X01", 10.5, 20.3, 15.7)
+        end_node = Node("X02", -5.2, 8.9, 2.1)
         node3 = Node("X03", -5.0, 8.0, 2.0)
         node4 = Node("X04", -15.2, 18.9, 12.1)
-        air_wire = Wire("Air Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Tube Wire 1", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         # 测试空的Wires对象
@@ -133,11 +133,11 @@ class TestNodeWire(unittest.TestCase):
 
 
     def test_Wires_split(self):
-        node1 = Node('X01', 0, 0, 0)
-        node2 = Node('X02', 10, 0, 0)
+        start_node = Node('X01', 0, 0, 0)
+        end_node = Node('X02', 10, 0, 0)
         node3 = Node('X03', 0, 0, 0)
         node4 = Node('X04', 15, 0, 0)
-        air_wire = Wire("Y01", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        air_wire = Wire("Y01", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Y02", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
         # 创建Wires对象
         wires = Wires([air_wire], [], [], [], [tube_wire])
@@ -151,30 +151,30 @@ class TestNodeWire(unittest.TestCase):
         
         # 测试第一条线段应该被分为两条线段
         # 子线段1：起始坐标是原线段的起始坐标，终止节点坐标应该是（5.0, 0.0, 0.0）,名字应该是'原来的支路名字_MiddleNode_子线段序号'
-        self.assertEqual(wires.air_wires[0].node1, node1)
-        self.assertEqual(wires.air_wires[0].node2.name, 'Y01_MiddleNode_0')
-        self.assertEqual(wires.air_wires[0].node2.x, 5.0)
-        self.assertEqual(wires.air_wires[0].node2.y, 0.0)
-        self.assertEqual(wires.air_wires[0].node2.z, 0.0)
+        self.assertEqual(wires.air_wires[0].start_node, start_node)
+        self.assertEqual(wires.air_wires[0].end_node.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[0].end_node.x, 5.0)
+        self.assertEqual(wires.air_wires[0].end_node.y, 0.0)
+        self.assertEqual(wires.air_wires[0].end_node.z, 0.0)
 
         # 子线段2：起始坐标是子线段1的终止坐标，终止节点坐标是原线段的终止坐标
-        self.assertEqual(wires.air_wires[1].node1.name, 'Y01_MiddleNode_0')
-        self.assertEqual(wires.air_wires[1].node1.x, 5.0)
-        self.assertEqual(wires.air_wires[1].node1.y, 0.0)
-        self.assertEqual(wires.air_wires[1].node1.z, 0.0)
-        self.assertEqual(wires.air_wires[1].node2, node2)
+        self.assertEqual(wires.air_wires[1].start_node.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[1].start_node.x, 5.0)
+        self.assertEqual(wires.air_wires[1].start_node.y, 0.0)
+        self.assertEqual(wires.air_wires[1].start_node.z, 0.0)
+        self.assertEqual(wires.air_wires[1].end_node, end_node)
 
 
 class TestTower(unittest.TestCase):
     def test_Tower_initialization(self):
         # 创建节点数据
-        node1 = Node("X01", 10.5, 20.3, 15.7)
-        node2 = Node("X02", -5.2, 8.9, 2.1)
+        start_node = Node("X01", 10.5, 20.3, 15.7)
+        end_node = Node("X02", -5.2, 8.9, 2.1)
         node3 = Node("X03", -5.0, 8.0, 2.0)
         node4 = Node("X04", -15.2, 18.9, 12.1)
 
         # 创建线段数据
-        air_wire = Wire("Air Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Tube Wire 1", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         # 创建线段集合数据
@@ -198,7 +198,7 @@ class TestTower(unittest.TestCase):
         # 创建一个电阻
         resistor = Resistor("Resistor_1", 100)
         # 创建导线
-        wire_1 = LumpWire("Lump Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        wire_1 = LumpWire("Lump Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         wire_2 = LumpWire("Lump Wire 2", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         
         # 为电路图中添加导线
@@ -210,7 +210,7 @@ class TestTower(unittest.TestCase):
         lump.connect_component_to_wire(resistor, wire_1)
 
         # 创建Tower对象
-        measurementNode = MeasurementNode("node1", 1.0, 2.0, 3.0, 1)
+        measurementNode = MeasurementNode("start_node", 1.0, 2.0, 3.0, 1)
         device = Device(12, 1, 0)
 
         tower = Tower(towerInfo, wires, lump, ground, device, measurementNode)

@@ -9,14 +9,14 @@ from Node import Node
 # from Lump import Component
 
 class Wire:
-    def __init__(self, name: str, node1: Node, node2: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int):
+    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int):
         """
         初始化管状线段对象
         
         参数说明:
         name (str): 线的名称
-        node1 (Node): 线的第一个节点
-        node2 (Node): 线的第二个节点
+        start_node (Node): 线的第一个节点
+        end_node (Node): 线的第二个节点
         offset (float): 线的偏置
         r (float): 线的半径
         R (float): 线的电阻
@@ -28,8 +28,8 @@ class Wire:
         inner_num (int): 线的内部导体数量
         """
         self.name = name
-        self.node1 = node1
-        self.node2 = node2
+        self.start_node = start_node
+        self.end_node = end_node
         self.offset = offset
         self.r = r
         self.R = R
@@ -42,9 +42,9 @@ class Wire:
 
 
     def length(self):
-        dx = self.node2.x - self.node1.x
-        dy = self.node2.y - self.node1.y
-        dz = self.node2.z - self.node1.z
+        dx = self.end_node.x - self.start_node.x
+        dy = self.end_node.y - self.start_node.y
+        dz = self.end_node.z - self.start_node.z
         return math.sqrt(dx**2 + dy**2 + dz**2)
 
 
@@ -52,11 +52,11 @@ class Wire:
         """
         返回线段对象的字符串表示形式。
         """
-        return f"Wire(name='{self.name}', node1={self.node1}, node2={self.node2}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here.)"
+        return f"Wire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here.)"
 
 
 class TubeWire(Wire):
-    def __init__(self, name: str, node1: Node, node2: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int, outer_radius: float, overall_outer_radius: float, inner_radius: float, inner_offset: float, inner_angle: float):
+    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int, outer_radius: float, overall_outer_radius: float, inner_radius: float, inner_offset: float, inner_angle: float):
         """
         初始化管状线段对象。
         
@@ -68,7 +68,7 @@ class TubeWire(Wire):
         inner_offset (float): 芯线距离中心位置
         inner_angle (float): 芯线角度
         """
-        super().__init__(name, node1, node2, offset, r, R, l, sig, mur, epr, VF)
+        super().__init__(name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF)
         self.outer_radius = outer_radius
         self.overall_outer_radius = overall_outer_radius
         self.inner_radius = inner_radius
@@ -80,12 +80,12 @@ class TubeWire(Wire):
         """
         返回管状线段对象的字符串表示形式。
         """
-        return f"TubeWire(name='{self.name}', node1={self.node1}, node2={self.node2}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, outer_radius={self.outer_radius}, overall_outer_radius={self.overall_outer_radius}, inner_radius={self.inner_radius}, inner_offset={self.inner_offset}, inner_angle={self.inner_angle}, VF_matrix is not showned here.)"
+        return f"TubeWire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, outer_radius={self.outer_radius}, overall_outer_radius={self.overall_outer_radius}, inner_radius={self.inner_radius}, inner_offset={self.inner_offset}, inner_angle={self.inner_angle}, VF_matrix is not showned here.)"
     
 
 
 class OHLWire(Wire):
-    def __init__(self, name, node1, node2, offset, r, R, l, sig, mur, epr, VF, Cir_No, Phase, phase):
+    def __init__(self, name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF, Cir_No, Phase, phase):
         """
         初始化管状线段对象。
         
@@ -95,14 +95,14 @@ class OHLWire(Wire):
         phase (int): 线圈相数
 
         """
-        super().__init__(name, node1, node2, offset, r, R, l, sig, mur, epr, VF)
+        super().__init__(name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF)
         self.Cir_No = Cir_No
         self.Phase = Phase
         self.phase = phase
 
 
 class LumpWire(Wire):
-    def __init__(self, name, node1, node2, offset, r, R, l, sig, mur, epr, VF):
+    def __init__(self, name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF):
         """
         初始化管状线段对象。
         
@@ -110,7 +110,7 @@ class LumpWire(Wire):
         component(list):表示当前导线上的集中参数元件。
 
         """
-        super().__init__(name, node1, node2, offset, r, R, l, sig, mur, epr, VF)
+        super().__init__(name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF)
         self.components = []
 
     def add_component(self, component):
@@ -168,23 +168,23 @@ class Wires:
 
         # 处理空气线段
         for wire in self.air_wires:
-            node_names.extend([wire.node1.name, wire.node2.name])
+            node_names.extend([wire.start_node.name, wire.end_node.name])
 
         # 处理地线段
         for wire in self.ground_wires:
-            node_names.extend([wire.node1.name, wire.node2.name])
+            node_names.extend([wire.start_node.name, wire.end_node.name])
 
         # 处理管状线段
         for wire in self.tube_wires:
-            node_names.extend([wire.node1.name, wire.node2.name])
+            node_names.extend([wire.start_node.name, wire.end_node.name])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
-            node_names.extend([wire.node1.name, wire.node2.name])
+            node_names.extend([wire.start_node.name, wire.end_node.name])
 
         # 处理短路线段
         for wire in self.short_wires:
-            node_names.extend([wire.node1.name, wire.node2.name])
+            node_names.extend([wire.start_node.name, wire.end_node.name])
 
         return node_names
 
@@ -199,28 +199,28 @@ class Wires:
 
         # 处理空气线段
         for wire in self.air_wires:
-            coordinates.extend([(wire.node1.x, wire.node1.y, wire.node1.z),
-                                (wire.node2.x, wire.node2.y, wire.node2.z)])
+            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
+                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         # 处理地线段
         for wire in self.ground_wires:
-            coordinates.extend([(wire.node1.x, wire.node1.y, wire.node1.z),
-                                (wire.node2.x, wire.node2.y, wire.node2.z)])
+            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
+                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         # 处理管状线段
         for wire in self.tube_wires:
-            coordinates.extend([(wire.node1.x, wire.node1.y, wire.node1.z),
-                                (wire.node2.x, wire.node2.y, wire.node2.z)])
+            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
+                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
-            coordinates.extend([(wire.node1.x, wire.node1.y, wire.node1.z),
-                                (wire.node2.x, wire.node2.y, wire.node2.z)])
+            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
+                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         # 处理短路线段
         for wire in self.short_wires:
-            coordinates.extend([(wire.node1.x, wire.node1.y, wire.node1.z),
-                                (wire.node2.x, wire.node2.y, wire.node2.z)])
+            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
+                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         return coordinates
     
@@ -236,23 +236,23 @@ class Wires:
 
         # 处理空气线段
         for wire in self.air_wires:
-            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         # 处理地线段
         for wire in self.ground_wires:
-            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         # 处理管状线段
         for wire in self.tube_wires:
-            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
-            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         # 处理短路线段
         for wire in self.short_wires:
-            coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
+            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         return coordinates
     
@@ -269,21 +269,21 @@ class Wires:
                 # 计算要均匀切分为多少段
                 num_segments = math.ceil(wire_length / max_length)
                 # 计算每个子分段的坐标分量
-                dx = (wire.node2.x - wire.node1.x) / num_segments
-                dy = (wire.node2.y - wire.node1.y) / num_segments
-                dz = (wire.node2.z - wire.node1.z) / num_segments
+                dx = (wire.end_node.x - wire.start_node.x) / num_segments
+                dy = (wire.end_node.y - wire.start_node.y) / num_segments
+                dz = (wire.end_node.z - wire.start_node.z) / num_segments
                 # 获取当前即将被分割线段的起始节点
-                node1 = wire.node1
+                start_node = wire.start_node
                 # 迭代切割线段，并分为小线段添加到线段列表中
                 for i in range(num_segments):
                     # 如果是最后一个分段，则将终止节点设为线段的终止节点
                     if i == num_segments-1:
-                        node2 = wire.node2
+                        end_node = wire.end_node
                     else:
-                        node2 = Node(f"{wire.name}_MiddleNode_{i}", node1.x + dx, node1.y + dy, node1.z + dz)
-                    new_wire = Wire(f"{wire.name}_Splited_{i}", node1, node2, wire.offset, wire.r, wire.R, wire.L, wire.sig, wire.mur, wire.epr, wire.VF)
+                        end_node = Node(f"{wire.name}_MiddleNode_{i}", start_node.x + dx, start_node.y + dy, start_node.z + dz)
+                    new_wire = Wire(f"{wire.name}_Splited_{i}", start_node, end_node, wire.offset, wire.r, wire.R, wire.L, wire.sig, wire.mur, wire.epr, wire.VF)
                     new_wires.append(new_wire)
-                    node1 = node2
+                    start_node = end_node
 
         return new_wires
 
