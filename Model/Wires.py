@@ -2,10 +2,11 @@
 # -*- coding: UTF-8 -*-
 import os
 import sys
+import math
 curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 from Node import Node
-from Lump import Component
+# from Lump import Component
 
 class Wire:
     def __init__(self, name: str, node1: Node, node2: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int):
@@ -38,6 +39,13 @@ class Wire:
         self.epr = epr
         self.VF = VF
         self.inner_num = 1
+
+
+    def length(self):
+        dx = self.node2.x - self.node1.x
+        dy = self.node2.y - self.node1.y
+        dz = self.node2.z - self.node1.z
+        return math.sqrt(dx**2 + dy**2 + dz**2)
 
 
     def __repr__(self):
@@ -105,7 +113,7 @@ class LumpWire(Wire):
         super().__init__(name, node1, node2, offset, r, R, l, sig, mur, epr, VF)
         self.components = []
 
-    def add_component(self, component: Component):
+    def add_component(self, component):
         """
         将一个基础元件添加到该导线上。
 
@@ -247,6 +255,44 @@ class Wires:
             coordinates.extend([(wire.name, wire.node1.name, wire.node2.name)])
 
         return coordinates
+    
+
+    def split_long_wires(self, wires, max_length):
+        new_wires = []
+        # 对所有的线段做长度检查
+        for wire in wires:
+            wire_length = wire.length()
+            # 如果长度符合要求，则跳过，否则，做线段切分
+            if wire_length <= max_length:
+                new_wires.append(wire)
+            else:
+                # 计算要均匀切分为多少段
+                num_segments = math.ceil(wire_length / max_length)
+                # 计算每个子分段的坐标分量
+                dx = (wire.node2.x - wire.node1.x) / num_segments
+                dy = (wire.node2.y - wire.node1.y) / num_segments
+                dz = (wire.node2.z - wire.node1.z) / num_segments
+                # 获取当前即将被分割线段的起始节点
+                node1 = wire.node1
+                # 迭代切割线段，并分为小线段添加到线段列表中
+                for i in range(num_segments):
+                    # 如果是最后一个分段，则将终止节点设为线段的终止节点
+                    if i == num_segments-1:
+                        node2 = wire.node2
+                    else:
+                        node2 = Node(f"{wire.name}_MiddleNode_{i}", node1.x + dx, node1.y + dy, node1.z + dz)
+                    new_wire = Wire(f"{wire.name}_Splited_{i}", node1, node2, wire.offset, wire.r, wire.R, wire.L, wire.sig, wire.mur, wire.epr, wire.VF)
+                    new_wires.append(new_wire)
+                    node1 = node2
+
+        return new_wires
+
+    def split_long_wires_all(self, max_length):
+        self.air_wires = self.split_long_wires(self.air_wires, max_length)
+        self.ground_wires = self.split_long_wires(self.ground_wires, max_length)
+        self.a2g_wires = self.split_long_wires(self.a2g_wires, max_length)
+        self.short_wires = self.split_long_wires(self.short_wires, max_length)
+        self.tube_wires = self.split_long_wires(self.tube_wires, max_length)
 
 
     def __repr__(self):

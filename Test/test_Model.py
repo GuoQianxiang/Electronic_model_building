@@ -37,8 +37,8 @@ class TestNodeWire(unittest.TestCase):
 
     def test_wire_initialization(self):
         # 测试Wire类的初始化
-        node1 = Node("X01", 10.5, 20.3, 15.7)
-        node2 = Node("X02", -5.2, 8.9, 2.1)
+        node1 = Node("X01", 0, 0, 0)
+        node2 = Node("X02", 2, 0, 0)
         wire = Wire("Test Wire", node1, node2, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, None)
 
         self.assertEqual(wire.name, "Test Wire")
@@ -51,6 +51,7 @@ class TestNodeWire(unittest.TestCase):
         self.assertEqual(wire.mur, 5.0)
         self.assertEqual(wire.epr, 6.0)
         self.assertEqual(wire.VF, None)
+        self.assertEqual(wire.length(), 2.0)
         # 测试静态变量
         self.assertEqual(wire.inner_num, 1)
 
@@ -129,6 +130,39 @@ class TestNodeWire(unittest.TestCase):
         self.assertEqual(wires.get_node_names(), expected_node_names)
         self.assertEqual(wires.get_node_coordinates(), expected_coordinates)
         self.assertEqual(wires.get_bran_coordinates(), expected_bran_coordinates)
+
+
+    def test_Wires_split(self):
+        node1 = Node('X01', 0, 0, 0)
+        node2 = Node('X02', 10, 0, 0)
+        node3 = Node('X03', 0, 0, 0)
+        node4 = Node('X04', 15, 0, 0)
+        air_wire = Wire("Y01", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        tube_wire = TubeWire("Y02", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        # 创建Wires对象
+        wires = Wires([air_wire], [], [], [], [tube_wire])
+
+        # 分割长度超过5m的线段
+        wires.split_long_wires_all(5)
+        # 最大长度为5，第一个线段应该被切割成两段
+        self.assertEqual(len(wires.air_wires), 2)
+        # 第二个线段应该被切割成三段
+        self.assertEqual(len(wires.tube_wires), 3)
+        
+        # 测试第一条线段应该被分为两条线段
+        # 子线段1：起始坐标是原线段的起始坐标，终止节点坐标应该是（5.0, 0.0, 0.0）,名字应该是'原来的支路名字_MiddleNode_子线段序号'
+        self.assertEqual(wires.air_wires[0].node1, node1)
+        self.assertEqual(wires.air_wires[0].node2.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[0].node2.x, 5.0)
+        self.assertEqual(wires.air_wires[0].node2.y, 0.0)
+        self.assertEqual(wires.air_wires[0].node2.z, 0.0)
+
+        # 子线段2：起始坐标是子线段1的终止坐标，终止节点坐标是原线段的终止坐标
+        self.assertEqual(wires.air_wires[1].node1.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[1].node1.x, 5.0)
+        self.assertEqual(wires.air_wires[1].node1.y, 0.0)
+        self.assertEqual(wires.air_wires[1].node1.z, 0.0)
+        self.assertEqual(wires.air_wires[1].node2, node2)
 
 
 class TestTower(unittest.TestCase):
