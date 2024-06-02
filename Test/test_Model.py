@@ -133,17 +133,24 @@ class TestNodeWire(unittest.TestCase):
 
 
     def test_Wires_split(self):
-        start_node = Node('X01', 0, 0, 0)
-        end_node = Node('X02', 10, 0, 0)
+        # 初始化点
+        node1 = Node('X01', 0, 0, 0)
+        node2 = Node('X02', 10, 0, 0)
         node3 = Node('X03', 0, 0, 0)
         node4 = Node('X04', 15, 0, 0)
-        air_wire = Wire("Y01", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        # 根据点初始化线
+        air_wire = Wire("Y01", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Y02", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
         # 创建Wires对象
-        wires = Wires([air_wire], [], [], [], [tube_wire])
+        wires = Wires()
+        # 将导线按照其位置，添加到Wires集合中。
+        wires.add_air_wire(air_wire)
+        wires.add_tube_wire(tube_wire)
+        print(wires)
 
         # 分割长度超过5m的线段
         wires.split_long_wires_all(5)
+        print(wires)
         # 最大长度为5，第一个线段应该被切割成两段
         self.assertEqual(len(wires.air_wires), 2)
         # 第二个线段应该被切割成三段
@@ -151,7 +158,7 @@ class TestNodeWire(unittest.TestCase):
         
         # 测试第一条线段应该被分为两条线段
         # 子线段1：起始坐标是原线段的起始坐标，终止节点坐标应该是（5.0, 0.0, 0.0）,名字应该是'原来的支路名字_MiddleNode_子线段序号'
-        self.assertEqual(wires.air_wires[0].start_node, start_node)
+        self.assertEqual(wires.air_wires[0].start_node, node1)
         self.assertEqual(wires.air_wires[0].end_node.name, 'Y01_MiddleNode_0')
         self.assertEqual(wires.air_wires[0].end_node.x, 5.0)
         self.assertEqual(wires.air_wires[0].end_node.y, 0.0)
@@ -162,23 +169,23 @@ class TestNodeWire(unittest.TestCase):
         self.assertEqual(wires.air_wires[1].start_node.x, 5.0)
         self.assertEqual(wires.air_wires[1].start_node.y, 0.0)
         self.assertEqual(wires.air_wires[1].start_node.z, 0.0)
-        self.assertEqual(wires.air_wires[1].end_node, end_node)
+        self.assertEqual(wires.air_wires[1].end_node, node2)
 
 
 class TestTower(unittest.TestCase):
     def test_Tower_initialization(self):
         # 创建节点数据
-        start_node = Node("X01", 10.5, 20.3, 15.7)
-        end_node = Node("X02", -5.2, 8.9, 2.1)
+        node1 = Node("X01", 10.5, 20.3, 15.7)
+        node2 = Node("X02", -5.2, 8.9, 2.1)
         node3 = Node("X03", -5.0, 8.0, 2.0)
         node4 = Node("X04", -15.2, 18.9, 12.1)
 
         # 创建线段数据
-        air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        air_wire = Wire("Air Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Tube Wire 1", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         # 创建线段集合数据
-        wires = Wires([air_wire], [], [tube_wire], [], [])
+        wires = Wires([air_wire], [], [], [], [tube_wire])
 
         # 创建信息集合
         vclass = "123"
@@ -198,7 +205,7 @@ class TestTower(unittest.TestCase):
         # 创建一个电阻
         resistor = Resistor("Resistor_1", 100)
         # 创建导线
-        wire_1 = LumpWire("Lump Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
+        wire_1 = LumpWire("Lump Wire 1", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         wire_2 = LumpWire("Lump Wire 2", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         
         # 为电路图中添加导线

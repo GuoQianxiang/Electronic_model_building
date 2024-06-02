@@ -9,7 +9,7 @@ from Node import Node
 # from Lump import Component
 
 class Wire:
-    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int):
+    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF):
         """
         初始化管状线段对象
         
@@ -39,6 +39,7 @@ class Wire:
         self.epr = epr
         self.VF = VF
         self.inner_num = 1
+        self.height = (end_node.z + start_node.z)/2
 
 
     def length(self):
@@ -46,6 +47,30 @@ class Wire:
         dy = self.end_node.y - self.start_node.y
         dz = self.end_node.z - self.start_node.z
         return math.sqrt(dx**2 + dy**2 + dz**2)
+    
+    # def Cal_LC_OHL(self, High, Dist, r0):
+    #     # Calculate OHL Parameters (L and C per unit) with Height and hori. Dist
+    #     Vair = 3e8  # Velocity in free space
+    #     mu0 = 4 * math.pi * 1e-7
+    #     km = mu0 / (2 * math.pi)
+    #     Ncon = High.shape[0]
+
+    #     out = np.log(2 * High / r0)
+    #     L = np.diag(out)
+
+    #     for i1 in range(Ncon - 1):
+    #         for i2 in range(i1 + 1, Ncon):
+    #             d = np.abs(Dist[i1] - Dist[i2])
+    #             h1 = High[i1]
+    #             h2 = High[i2]
+    #             L[i1, i2] = 0.5 * np.log((d ** 2 + (h1 + h2) ** 2) / (d ** 2 + (h1 - h2) ** 2))
+    #             L[i2, i1] = L[i1, i2]
+
+    #     L = km * L
+    #     C = np.linalg.inv(L) / Vair ** 2
+
+    #     return L, C
+
 
 
     def __repr__(self):
@@ -156,6 +181,12 @@ class Wires:
     def add_tube_wire(self, wire):
         self.tube_wires.append(wire)
 
+    def count(self):
+        """
+        返回线段总数。
+        """
+        return len(self.air_wires) + len(self.ground_wires) + len(self.tube_wires) + len(self.a2g_wires) + len(self.short_wires)
+
     
     def get_node_names(self):
         """
@@ -165,6 +196,8 @@ class Wires:
         node_names (list): 结点名字列表
         """
         node_names = []
+
+        # 要求按照特定顺序进行拼接，因此分别进行for循环。
 
         # 处理空气线段
         for wire in self.air_wires:
@@ -196,6 +229,8 @@ class Wires:
         coordinates (list): 结点坐标列表,每个元素为(x, y, z)
         """
         coordinates = []
+
+        # 要求按照特定顺序进行拼接，因此分别进行for循环。
 
         # 处理空气线段
         for wire in self.air_wires:
@@ -233,6 +268,8 @@ class Wires:
         coordinates (list): 结点坐标列表,每个元素为(x, y, z)
         """
         coordinates = []
+
+        # 要求按照特定顺序进行拼接，因此分别进行for循环。
 
         # 处理空气线段
         for wire in self.air_wires:
@@ -296,4 +333,4 @@ class Wires:
 
 
     def __repr__(self):
-        return f"Wires(air_wires={self.air_wires}, ground_wires={self.ground_wires}, a2g_wires={self.a2g_wires}, short_wires={self.short_wires}, tube_wires={self.tube_wires})"
+        return f"Wires(\nair_wires={self.air_wires},\n ground_wires={self.ground_wires},\n a2g_wires={self.a2g_wires},\n short_wires={self.short_wires},\n tube_wires={self.tube_wires}\n)"
