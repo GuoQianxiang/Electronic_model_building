@@ -146,11 +146,15 @@ class TestNodeWire(unittest.TestCase):
         # 将导线按照其位置，添加到Wires集合中。
         wires.add_air_wire(air_wire)
         wires.add_tube_wire(tube_wire)
-        print(wires)
+        print("----------------------------------------------------------------")
+        wires.display()
+        print("----------------------------------------------------------------")
 
         # 分割长度超过5m的线段
         wires.split_long_wires_all(5)
-        print(wires)
+        print("----------------------------------------------------------------")
+        wires.display()
+        print("----------------------------------------------------------------")
         # 最大长度为5，第一个线段应该被切割成两段
         self.assertEqual(len(wires.air_wires), 2)
         # 第二个线段应该被切割成三段
@@ -159,13 +163,13 @@ class TestNodeWire(unittest.TestCase):
         # 测试第一条线段应该被分为两条线段
         # 子线段1：起始坐标是原线段的起始坐标，终止节点坐标应该是（5.0, 0.0, 0.0）,名字应该是'原来的支路名字_MiddleNode_子线段序号'
         self.assertEqual(wires.air_wires[0].start_node, node1)
-        self.assertEqual(wires.air_wires[0].end_node.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[0].end_node.name, 'Y01_MiddleNode_1')
         self.assertEqual(wires.air_wires[0].end_node.x, 5.0)
         self.assertEqual(wires.air_wires[0].end_node.y, 0.0)
         self.assertEqual(wires.air_wires[0].end_node.z, 0.0)
 
         # 子线段2：起始坐标是子线段1的终止坐标，终止节点坐标是原线段的终止坐标
-        self.assertEqual(wires.air_wires[1].start_node.name, 'Y01_MiddleNode_0')
+        self.assertEqual(wires.air_wires[1].start_node.name, 'Y01_MiddleNode_1')
         self.assertEqual(wires.air_wires[1].start_node.x, 5.0)
         self.assertEqual(wires.air_wires[1].start_node.y, 0.0)
         self.assertEqual(wires.air_wires[1].start_node.z, 0.0)

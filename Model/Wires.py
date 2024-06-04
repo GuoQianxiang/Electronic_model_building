@@ -70,6 +70,11 @@ class Wire:
     #     C = np.linalg.inv(L) / Vair ** 2
 
     #     return L, C
+    def display(self):
+        """
+        打印线段对象信息。
+        """
+        print(f"Wire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here.)\n")
 
 
 
@@ -165,6 +170,34 @@ class Wires:
         self.a2g_wires = a2g_wires or []
         self.short_wires = short_wires or []
         self.tube_wires = tube_wires or []
+
+
+    def display(self):
+        # 处理空气线段
+        print("[air_wires]:\n")
+        for wire in self.air_wires:
+            wire.display()
+
+        # 处理地线段
+        print("[ground_wires]:\n")
+        for wire in self.ground_wires:
+            wire.display()
+
+        # 处理管状线段
+        print("[tube_wires]:\n")
+        for wire in self.tube_wires:
+            wire.display()
+
+        # 处理空气到地线段
+        print("[a2g_wires]:\n")
+        for wire in self.a2g_wires:
+            wire.display()
+
+        # 处理短路线段
+        print("[short_wires]:\n")
+        for wire in self.short_wires:
+            wire.display()
+
 
     def add_air_wire(self, wire):
         self.air_wires.append(wire)
@@ -317,8 +350,8 @@ class Wires:
                     if i == num_segments-1:
                         end_node = wire.end_node
                     else:
-                        end_node = Node(f"{wire.name}_MiddleNode_{i}", start_node.x + dx, start_node.y + dy, start_node.z + dz)
-                    new_wire = Wire(f"{wire.name}_Splited_{i}", start_node, end_node, wire.offset, wire.r, wire.R, wire.L, wire.sig, wire.mur, wire.epr, wire.VF)
+                        end_node = Node(f"{wire.name}_MiddleNode_{i+1}", start_node.x + dx, start_node.y + dy, start_node.z + dz)
+                    new_wire = Wire(f"{wire.name}_Splited_{i+1}", start_node, end_node, wire.offset, wire.r, wire.R, wire.L, wire.sig, wire.mur, wire.epr, wire.VF)
                     new_wires.append(new_wire)
                     start_node = end_node
 
