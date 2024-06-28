@@ -2,6 +2,7 @@ import numpy as np
 from Model.Node import Node
 from Model.Wires import Wire, Wires
 from Model.Ground import Ground
+from Utils.Math import INT_SLAN_2D, Cal_LC_OHL, calculate_potential
 
 
 if __name__ == '__main__':
@@ -38,8 +39,36 @@ if __name__ == '__main__':
     # 创建地面对象
     ground = Ground(1e-3, 1, 4, 'LSG', 'weak', 'isolational')
 
+    # 创建线段集合
+    wires = Wires()
+
+    wires.add_a2g_wire(wire1)
+    wires.add_air_wire(wire2)
+    wires.add_ground_wire(wire3)
+    wires.add_short_wire(wire4)
+
+    # 输出线段集合
+    # print(wires)
+
+    start_points = wires.get_start_points()
+    end_points = wires.get_end_points()
+    radii = wires.get_radii()
+    offsets = wires.get_offsets()
+    heights = wires.get_heights()
+    lengths = wires.get_lengths()
+    # print(lengths)
+    # print(wires.count())
 
 
 
+    # L = INT_SLAN_2D(start_points, end_points, radii, start_points, end_points, radii, 2, 2)
+    # print(L)
+    print(wires.get_bran_coordinates())
+    print(wires.get_bran_index())
+    index = wires.get_bran_index()
+    At = index[:, 1:3]
+    print(At)
 
-    
+    # P = calculate_potential(start_points, end_points, lengths, radii, At, 8)
+    # print(P)
+    print(wires.count_unique_points())

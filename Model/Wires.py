@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import os
+import re
 import sys
 import math
+import numpy as np
 curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 from Node import Node
@@ -47,29 +49,8 @@ class Wire:
         dy = self.end_node.y - self.start_node.y
         dz = self.end_node.z - self.start_node.z
         return math.sqrt(dx**2 + dy**2 + dz**2)
-    
-    # def Cal_LC_OHL(self, High, Dist, r0):
-    #     # Calculate OHL Parameters (L and C per unit) with Height and hori. Dist
-    #     Vair = 3e8  # Velocity in free space
-    #     mu0 = 4 * math.pi * 1e-7
-    #     km = mu0 / (2 * math.pi)
-    #     Ncon = High.shape[0]
 
-    #     out = np.log(2 * High / r0)
-    #     L = np.diag(out)
 
-    #     for i1 in range(Ncon - 1):
-    #         for i2 in range(i1 + 1, Ncon):
-    #             d = np.abs(Dist[i1] - Dist[i2])
-    #             h1 = High[i1]
-    #             h2 = High[i2]
-    #             L[i1, i2] = 0.5 * np.log((d ** 2 + (h1 + h2) ** 2) / (d ** 2 + (h1 - h2) ** 2))
-    #             L[i2, i1] = L[i1, i2]
-
-    #     L = km * L
-    #     C = np.linalg.inv(L) / Vair ** 2
-
-    #     return L, C
     def display(self):
         """
         打印线段对象信息。
@@ -88,7 +69,7 @@ class Wire:
 class TubeWire(Wire):
     def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int, outer_radius: float, overall_outer_radius: float, inner_radius: float, inner_offset: float, inner_angle: float):
         """
-        初始化管状线段对象。
+        初始化管状线段对象。(同时满足cable中线段的定义)
         
         继承自Wire类,并添加或修改以下参数:
         原先的r参数表示为内径
@@ -293,12 +274,118 @@ class Wires:
         return coordinates
     
 
+    def count_unique_points(self) -> int:
+        """
+        统计 Wires 对象中所有线段的起始点和终止点的总个数。
+
+        参数:
+        wires (Wires): Wires 对象
+
+        返回:
+        int: 所有不重复点的总个数
+        """
+        all_points = set()
+
+        # 统计 air_wires 中的点
+        for wire in self.air_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        # 统计 ground_wires 中的点
+        for wire in self.ground_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        # 统计 a2g_wires 中的点
+        for wire in self.a2g_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        # 统计 short_wires 中的点
+        for wire in self.short_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        # 统计 tube_wires 中的点
+        for wire in self.tube_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        return len(all_points)
+
+
+    def get_start_points(self):
+        """
+        返回起始点结点坐标矩阵,按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        start_points (numpy.narray, n*3): n条线段的起始点结点坐标矩阵,每行为(x, y, z)
+        """
+        start_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            start_points[i] = [wire.start_node.x, wire.start_node.y, wire.start_node.z]
+        return start_points
+
+
+    def get_end_points(self):
+        """
+        返回终止点结点坐标矩阵,按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        end_points (numpy.narray, n*3): n条线段的终止点结点坐标矩阵,每行为(x, y, z)
+        """
+        end_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            end_points[i] = [wire.end_node.x, wire.end_node.y, wire.end_node.z]
+        return end_points
+
+
+    def get_radii(self):
+        """
+        返回线段集合的内径矩阵,按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        radii (numpy.narray, n*1): n条线段的内径矩阵,每行为某一条线段的内径
+        """
+        radii = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            radii[i] = wire.r
+        return radii
+
+
+    def get_heights(self):
+        heights = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            heights[i] = wire.height
+        return heights
+
+
+    def get_offsets(self):
+        offsets = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            offsets[i] = wire.offset
+        return offsets
+
+
+    def get_lengths(self):
+        """
+        返回线段长度矩阵,按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        lengths (numpy.narray, n*1): n条线段的长度
+        """
+        lengths = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            lengths[i] = wire.length()
+        return lengths
+
+
     def get_bran_coordinates(self):
         """
         返回按照下列格式所有线段（支路）的信息汇总列表：【线段名，起始节点名，终止节点名】,按照air、ground、tube、a2g、short的顺序。
 
         返回:
-        coordinates (list): 结点坐标列表,每个元素为(x, y, z)
+        coordinates (list): 信息汇总列表,每个元素为("Y01", "X01", "X02")
         """
         coordinates = []
 
@@ -324,6 +411,27 @@ class Wires:
         for wire in self.short_wires:
             coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
+        return coordinates
+
+
+    def get_bran_index(self):
+        """
+        返回按照下列格式所有线段（支路）的信息汇总列表：
+        【线段名最后的有效数字位，起始节点名最后的有效数字位，终止节点名最后的有效数字位】,
+        按照air、ground、tube、a2g、short的顺序。
+
+        返回:
+        coordinates (list): 信息汇总列表,每个元素为(1, 1, 2)
+        """
+        coordinates = []
+
+        # 要求按照特定顺序进行拼接,因此分别进行for循环。
+        coordinates = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            wire_num = int(re.findall(r'\d+', wire.name)[-1])
+            start_num = int(re.findall(r'\d+', wire.start_node.name)[-1])
+            end_num = int(re.findall(r'\d+', wire.end_node.name)[-1])
+            coordinates[i] = [wire_num, start_num, end_num]
         return coordinates
     
 
