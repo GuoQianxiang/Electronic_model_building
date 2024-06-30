@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import numpy.matlib
-
+from Model import Wires
 
 def Cal_LC_OHL(High, Dist, r0):
     """
@@ -103,18 +103,34 @@ def INT_LINE_D2P_D(U1a, U1b, V1, W1, r1, U2a, U2b, V2, W2, r2):
         return out
 
 
-def INT_SLAN_2D(ps1, ps2, rs, pf1, pf2, rf, PROD_MOD, COEF_MOD):
+def calculate_inductance(ps1, ps2, rs, pf1, pf2, rf):
     """
     【函数功能】计算线段集的电感矩阵
     【入参】
     ps1(numpy.ndarray: n*3): n条线的起始点坐标
     ps2(numpy.ndarray: n*3): n条线的终止点坐标
     rs(numpy.ndarray: n*1): n条线的半径
+
+    【出参】
+    INT(numpy.ndarray: n*n): n条线段的电感矩阵
+    """
+    PROD_MOD = 2  # matrix product
+    COEF_MOD = 2  # inductance
+    return INT_SLAN_2D(ps1, ps2, rs, pf1, pf2, rf, PROD_MOD, COEF_MOD)
+
+
+def INT_SLAN_2D(ps1, ps2, rs, pf1, pf2, rf, PROD_MOD, COEF_MOD):
+    """
+    【函数功能】计算线段集的电位系数/电感矩阵
+    【入参】
+    ps1(numpy.ndarray: n*3): n条线的起始点坐标矩阵
+    ps2(numpy.ndarray: n*3): n条线的终止点坐标矩阵
+    rs(numpy.ndarray: n*1): n条线的半径矩阵
     PROD_MOD(int): 计算模式(1 for dot product, 2 for vector product)
     COEF_MOD(int): 计算内容(1 for 电位系数potential (P), 2 for 电感inductance (L))
 
     【出参】
-    INT(numpy.ndarray: n*n): n条线段的电感矩阵(COEF_MOD == 2)/电位系数矩阵((COEF_MOD == 1))
+    INT(numpy.ndarray: n*n): 电位系数矩阵((COEF_MOD == 1))/n条线段的电感矩阵(COEF_MOD == 2)
     """
     # (0) initialization
     g0 = 1e-5
@@ -328,8 +344,7 @@ def calculate_distances(points1, points2):
     return distances
 
 
-def calculate_potential(ps1, ps2, ls, rs, At, Nnode):
-    pf1, pf2, lf, rf = ps1, ps2, ls, rs
+def calculate_potential(ps1, ps2, ls, rs, pf1, pf2, lf, rf, At, Nnode):
 
     # (2) Generating coordinates of node segments (half of bran segments)
     ps0 = 0.5 * (ps1 + ps2)
@@ -425,3 +440,155 @@ def calculate_potential(ps1, ps2, ls, rs, At, Nnode):
     P = P / (nlns * np.transpose(nlnf))
 
     return P
+
+
+def calculate_direction_cosines(start_points, end_points, lengths):
+    """
+    计算 x、y 和 z 方向上的余弦值矩阵。
+
+    参数:
+    start_points (numpy.ndarray): n*3 矩阵,表示 n 条线段的起点坐标(x, y, z)
+    end_points (numpy.ndarray): n*3 矩阵,表示 n 条线段的终点坐标(x, y, z)
+    lengths (numpy.ndarray): n*1 矩阵,表示 n 条线段的长度
+
+    返回:
+    x_cosines, y_cosines, z_cosines(numpy.ndarray, numpy.ndarray, numpy.ndarray): x、y 和 z 方向上的余弦值矩阵
+    """
+    # 计算 x 方向上的余弦值
+    x_cosines = (end_points[:, 0] - start_points[:, 0]).reshape(lengths.shape[0], 1) / lengths
+
+    # 计算 y 方向上的余弦值
+    y_cosines = (end_points[:, 1] - start_points[:, 1]).reshape(lengths.shape[0], 1) / lengths
+
+    # 计算 z 方向上的余弦值
+    z_cosines = (end_points[:, 2] - start_points[:, 2]).reshape(lengths.shape[0], 1) / lengths
+
+    return x_cosines, y_cosines, z_cosines
+
+
+def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, constants):
+    # （0) Intial constants
+    ep0, mu0, ke, km = constants.ep0, constants.mu0, constants.ke, constants.km
+
+    # Nb所有支路的数量
+    Nb = wires.count()
+    # Nn所有节点的数量 
+    Nn = wires.count_unique_points()
+    # Nba所有空气中支路的数量
+    Nba = wires.count_airWires()
+    # Ngn所有地面支路的数量
+    Ngn = wires.count_gndWires()
+    # Nna所有空气中节点的数量
+    Nna = wires.count_unique_airPoints()
+    # Nng所有地面节点的数量
+    Nng = wires.count_unique_gndPoints()
+    # rb1 空气中的支路index集合(n*1)
+    # 由于支路和节点矩阵，都是根据air_wires -> ground_wires -> a2g_wires -> short_wires -> tube_wires顺序进行拼接，因此可以通过支路数量进行数据切分，取出空气中和地面的线段的参数
+    rb1 = np.arange(0, Nba)  # air bran
+    rb1 = rb1.flatten()
+    # rb2 地面导线的支路index集合（n*1）
+    rb2 = np.arange(Nba, Nba + Ngn)  # gnd bran
+    rb2 = rb2.flatten()
+    # rn1 空气中节点index（n*1）
+    rn1 = np.arange(0, Nna)  # air node
+    rn1 = rn1.flatten()
+    # rn2 地面导线的节点index（n*1）
+    rn2 = np.arange(Nna, Nna + Nng)  # gnd node,此处可能会有问题，因为wires不仅只包含空气中导线和地面导线，数据切分可能会有问题，应该为np.arange(空气导线数量, 空气导线数量+地面导线数量)
+    rn2 = rn2.flatten()
+
+    # (1) Obtain L and P matrices without considering the ground effect
+
+    start_points = wires.get_start_points()
+    end_points = wires.get_end_points()
+    radii = wires.get_radii()
+    lengths = wires.get_lengths()
+    At = wires.get_bran_index()[:, 1:3]
+    
+
+    # get x_consines, y_consines and z_consines
+    x_consines, y_consines, z_consines = calculate_direction_cosines(start_points, end_points, lengths)
+
+
+    # WireL = ls      # output wire length (updated in 04/24)
+    # for gnd and air segments
+    Lout = calculate_inductance(start_points, end_points, radii, start_points, end_points, radii)
+    Pout = calculate_potential(start_points, end_points, lengths, radii, start_points, end_points, lengths, radii, At, Nn)
+
+    # (2) Constructing L and P by considering the image effect
+    # no ground (0), perfect ground (1), lossy ground model (2)
+    # (2a) without ground
+    # free-space inductance
+    L0 = Lout * (x_consines * np.transpose(x_consines) + y_consines * np.transpose(y_consines) + z_consines * np.transpose(z_consines))
+    # free-space potential
+    P0 = Pout
+
+    # (2b) with ground
+    # L and P matrices for aai,ggi
+
+    if ground.gnd_model != "No":
+        pf1 = start_points.copy()
+        pf1[:, 2] = -pf1[:, 2]  # image for air segments
+        pf2 = end_points.copy()
+        pf2[:, 2] = -pf2[:, 2]  # image for gnd segments
+
+        tmp = pf1[:, 2] + pf2[:, 2]  # image on the ground surface
+        if (tmp < min(radii)).all():
+            pf1[:, 2] = -2 * max(radii)
+            pf2[:, 2] = -2 * max(radii)
+        del tmp
+
+        # L and P matrices for air and gnd segments
+        Lai = calculate_inductance(start_points[rb1, :], end_points[rb1, :], radii[rb1, 0], pf1[rb1, :], pf2[rb1, :], radii[rb1, 0])
+        Pai = calculate_potential(start_points[rb1, :], end_points[rb1, :], lengths[rb1, 0], radii[rb1, 0], pf1[rb1, :], pf2[rb1, :], lengths[rb1, 0], radii[rb1, 0], At[rb1, :], Nna)
+
+        Lgi = calculate_inductance(start_points[rb2, :], end_points[rb2, :], radii[rb2, 0], pf1[rb2, :], pf2[rb2, :], radii[rb2, 0])
+        Pgi = calculate_potential(start_points[rb2, :], end_points[rb2, :], lengths[rb2, 0], radii[rb2, 0], pf1[rb2, :], pf2[rb2, :], lengths[rb2, 0], radii[rb2, 0], At[rb2, :], Nng)
+
+    # (2bi) perfect ground
+    if ground.gnd_model == "Perfect":
+        L0 = L0 - Lai * (x_consines * np.transpose(x_consines) + y_consines * np.transpose(y_consines) + z_consines * np.transpose(z_consines))
+        P0 = P0 - Pai
+
+    # (2bii) lossy ground model
+    if ground.gnd_model == "Lossy":
+        if not rb1.size or not rb2.size:
+            Lag = np.array([])
+            Lga = np.array([])
+            Pag = np.array([])
+            Pga = np.array([])
+        else:
+            Lag = Lout[rb1[:, np.newaxis], rb2]
+            Lga = Lout[rb2[:, np.newaxis], rb1]
+            Pag = Pout[rn1[:, np.newaxis], rn2]
+            Pga = Pout[rn2[:, np.newaxis], rn1]
+
+        # image effect
+        # (i) f./s. wire in air
+        z_consinesA = z_consines[rb1]
+        L0[rb1[:, np.newaxis], rb1] = L0[rb1[:, np.newaxis], rb1] + Lai * z_consinesA * np.transpose(
+            z_consinesA)  # vertical contribution
+        P0[rn1[:, np.newaxis], rn1] = P0[rn1[:, np.newaxis], rn1] - Pai
+
+        if Nng != 0:
+            # x_consinesG = x_consines[rb2]  # gnd wire: direction numbers
+            # y_consinesG = y_consines[rb2]
+            z_consinesG = z_consines[rb2]
+
+            # (ii) f. wire in gnd s. wire in air
+            L0[rb2[:, np.newaxis], rb1] = L0[rb2[:, np.newaxis], rb1] + Lga * z_consinesG * np.transpose(
+                z_consinesA)  # vertical contribution
+            P0[rn2[:, np.newaxis], rn1] = P0[rn2[:, np.newaxis], rn1] - Pga
+
+            # (iii) f./s. wire in gnd
+            L0[rb2[:, np.newaxis], rb2] = L0[rb2[:, np.newaxis], rb2] - Lgi * z_consinesG * np.transpose(
+                z_consinesG)  # vertical contribution
+            P0[rn2[:, np.newaxis], rn2] = P0[rn2[:, np.newaxis], rn2] + Pgi
+
+            # (iv) f. wire in air s. wire in gnd
+            L0[rb1[:, np.newaxis], rb2] = L0[rb1[:, np.newaxis], rb2] - Lag * z_consinesA * np.transpose(
+                z_consinesG)  # vertical contribution
+            P0[rn1[:, np.newaxis], rn2] = P0[rn1[:, np.newaxis], rn2] + Pag
+
+    L0 = km * L0
+    P0 = ke * P0
+    return L0, P0

@@ -2,7 +2,8 @@ import numpy as np
 from Model.Node import Node
 from Model.Wires import Wire, Wires
 from Model.Ground import Ground
-from Utils.Math import INT_SLAN_2D, Cal_LC_OHL, calculate_potential
+from Model.Contant import Constant
+from Utils.Math import calculate_inductance, calculate_potential, calculate_wires_inductance_potential_with_ground
 
 
 if __name__ == '__main__':
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     wire4 = Wire('Y04', node7, node8, 0.6, 0.005, 0, 0, 58000000, 1, 1, VF)
 
     # 创建地面对象
-    ground = Ground(1e-3, 1, 4, 'LSG', 'weak', 'isolational')
+    ground = Ground(1e-3, 1, 4, 'Lossy', 'weak', 'isolational')
 
     # 创建线段集合
     wires = Wires()
@@ -61,14 +62,18 @@ if __name__ == '__main__':
 
 
 
-    # L = INT_SLAN_2D(start_points, end_points, radii, start_points, end_points, radii, 2, 2)
-    # print(L)
-    print(wires.get_bran_coordinates())
-    print(wires.get_bran_index())
+    L = calculate_inductance(start_points, end_points, radii, start_points, end_points, radii)
+    print(L)
+
     index = wires.get_bran_index()
     At = index[:, 1:3]
-    print(At)
+    # print(At)
 
-    # P = calculate_potential(start_points, end_points, lengths, radii, At, 8)
-    # print(P)
-    print(wires.count_unique_points())
+    P = calculate_potential(start_points, end_points, lengths, radii, start_points, end_points, lengths, radii, At, 8)
+    print(P)
+    # print(wires.count_unique_points())
+
+    constants = Constant()
+    L0, P0 = calculate_wires_inductance_potential_with_ground(wires, ground, constants)
+    print(L0)
+    print(P0)

@@ -5,14 +5,14 @@ sys.path.append(curPath)
 
 from Info import Info
 from Wires import Wires
-from Lump import Circuit
+# from Lump import Circuit
 from Ground import Ground
 from Device import Device
 from Node import MeasurementNode
 
 
 class Tower:
-    def __init__(self, Info: Info, Wires: Wires, Lump: Circuit, Ground: Ground, Device: Device, MeasurementNode: MeasurementNode):
+    def __init__(self, Info: Info, Wires: Wires, Lump, Ground: Ground, Device: Device, MeasurementNode: MeasurementNode):
         """
         初始化杆塔对象
 

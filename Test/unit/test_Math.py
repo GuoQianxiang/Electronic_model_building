@@ -3,13 +3,34 @@ import sys
 sys.path.append('../..')
 import unittest
 import numpy as np
-from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential
+from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential, calculate_direction_cosines
 from Model.Wires import Wire, Wires
 from Model.Node import Node
 from Model.Ground import Ground
 
 
 class TestMath(unittest.TestCase):
+    def test_calculate_direction_cosines(self):
+        # 示例数据
+        points1 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        points2 = np.array([[2, 3, 4], [13, 14, 15], [16, 17, 18]])
+        
+        distances = np.sqrt(calculate_distances(points1, points2))
+
+        x_consines, y_consines, z_consines = calculate_direction_cosines(points1, points2, distances)
+        expected_x_consines = np.array([[0.57735027],
+                                        [0.57735027],
+                                        [0.57735027]])
+        expected_y_consines = np.array([[0.57735027],
+                                        [0.57735027],
+                                        [0.57735027]])
+        expected_z_consines = np.array([[0.57735027],
+                                        [0.57735027],
+                                        [0.57735027]])
+        self.assertTrue(np.allclose(expected_x_consines, x_consines))
+        self.assertTrue(np.allclose(expected_y_consines, y_consines))
+        self.assertTrue(np.allclose(expected_z_consines, z_consines))
+
 
     def test_calculate_distances(self):
         # 示例数据
@@ -22,7 +43,7 @@ class TestMath(unittest.TestCase):
         np.testing.assert_allclose(distances, expected_distances)
 
     def test_calculate_potential_inductance(self):
-            # 初始化节点数据
+        # 初始化节点数据
         node1 = Node('X01', 0, 0, 10.5)
         node2 = Node('X02', 1000, 0, 10.5)
         node3 = Node('X03', 0, -0.4, 10)
@@ -74,15 +95,15 @@ class TestMath(unittest.TestCase):
         L = INT_SLAN_2D(start_points, end_points, radii, start_points, end_points, radii, 2, 2)
   
         expected_inductance = np.array([[23798.45113262, 14589.09915526, 14094.68345806, 13203.80441899],  
-                                [14589.09915526, 23798.45113262, 14549.89824057, 14589.09915526],  
-                                [14094.68345806, 14549.89824057, 23798.45113262, 13697.6629857 ],  
-                                [13203.80441899, 14589.09915526, 13697.6629857,  23798.45113262]])
+                                        [14589.09915526, 23798.45113262, 14549.89824057, 14589.09915526],  
+                                        [14094.68345806, 14549.89824057, 23798.45113262, 13697.6629857 ],  
+                                        [13203.80441899, 14589.09915526, 13697.6629857,  23798.45113262]])
 
 
         index = wires.get_bran_index()
         At = index[:, 1:3]
 
-        P = calculate_potential(start_points, end_points, lengths, radii, At, points_num)
+        P = calculate_potential(start_points, end_points, lengths, radii, start_points, end_points, lengths, radii, At, points_num)
 
         expected_potential = np.array([[0.04482433, 0.00277257, 0.02541934, 0.00277003, 0.02632925, 0.00277055, 0.02462586, 0.00276947],  
                                        [0.00277257, 0.04482433, 0.00277003, 0.02541934, 0.00277055, 0.02632925, 0.00276947, 0.02462586],  

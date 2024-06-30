@@ -272,7 +272,47 @@ class Wires:
                                 (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         return coordinates
-    
+
+
+    def count_unique_airPoints(self):
+        """
+        统计 Wires 对象中所有空气线段的起始点和终止点的总个数。
+
+        参数:
+        wires (Wires): Wires 对象
+
+        返回:
+        int: 所有不重复点的总个数
+        """
+        all_points = set()
+
+        # 统计 air_wires 中的点
+        for wire in self.air_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        return len(all_points)
+
+
+    def count_unique_gndPoints(self) -> int:
+        """
+        统计 Wires 对象中所有地线段的起始点和终止点的总个数。
+
+        参数:
+        wires (Wires): Wires 对象
+
+        返回:
+        int: 所有不重复点的总个数
+        """
+        all_points = set()
+
+        # 统计 ground_wires 中的点
+        for wire in self.ground_wires:
+            all_points.add(wire.start_node)
+            all_points.add(wire.end_node)
+
+        return len(all_points)
+
 
     def count_unique_points(self) -> int:
         """
@@ -312,6 +352,22 @@ class Wires:
             all_points.add(wire.end_node)
 
         return len(all_points)
+
+
+    def count_a2gWires(self):
+        return len(self.a2g_wires)
+
+
+    def count_tubeWires(self):
+        return len(self.tube_wires)
+
+
+    def count_gndWires(self):
+        return len(self.ground_wires)
+
+
+    def count_airWires(self):
+        return len(self.air_wires)
 
 
     def get_start_points(self):

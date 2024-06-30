@@ -4,7 +4,7 @@ class Ground:
         sig(float):电导率
         mur(float):相对磁导率
         epr(float):相对介电常数
-        gnd_model(str):接地模型
+        gnd_model(str):接地模型("No", "Perfect", "Lossy")
         ionisation_intensity(str):电离强度
         ionisation_model(str):电离模型
         """
