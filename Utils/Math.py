@@ -473,15 +473,15 @@ def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, const
     # Nb所有支路的数量
     Nb = wires.count()
     # Nn所有节点的数量 
-    Nn = wires.count_unique_points()
+    Nn = wires.count_distinct_points()
     # Nba所有空气中支路的数量
     Nba = wires.count_airWires()
     # Ngn所有地面支路的数量
     Ngn = wires.count_gndWires()
     # Nna所有空气中节点的数量
-    Nna = wires.count_unique_airPoints()
+    Nna = wires.count_distinct_airPoints()
     # Nng所有地面节点的数量
-    Nng = wires.count_unique_gndPoints()
+    Nng = wires.count_distinct_gndPoints()
     # rb1 空气中的支路index集合(n*1)
     # 由于支路和节点矩阵，都是根据air_wires -> ground_wires -> a2g_wires -> short_wires -> tube_wires顺序进行拼接，因此可以通过支路数量进行数据切分，取出空气中和地面的线段的参数
     rb1 = np.arange(0, Nba)  # air bran

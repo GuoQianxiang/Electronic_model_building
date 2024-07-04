@@ -59,8 +59,8 @@ class TestNodeWire(unittest.TestCase):
 
     def test_tube_wire_initialization(self):
         # 测试TubeWire类的初始化
-        start_node = Node("Node A", 10.5, 20.3, 15.7)
-        end_node = Node("Node B", -5.2, 8.9, 2.1)
+        start_node = Node("X01", 10.5, 20.3, 15.7)
+        end_node = Node("X02", -5.2, 8.9, 2.1)
         tube_wire = TubeWire("Test Tube Wire", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
         self.assertEqual(tube_wire.name, "Test Tube Wire")
@@ -84,8 +84,8 @@ class TestNodeWire(unittest.TestCase):
 
     def test_wires_initialization(self):
         # 创建测试数据
-        start_node = Node("Node A", 10.5, 20.3, 15.7)
-        end_node = Node("Node B", -5.2, 8.9, 2.1)
+        start_node = Node("X01", 10.5, 20.3, 15.7)
+        end_node = Node("X02", -5.2, 8.9, 2.1)
         air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
         tube_wire = TubeWire("Tube Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
 
@@ -272,7 +272,7 @@ class TestWiresMethods(unittest.TestCase):
         heights = wires.get_heights()
         lengths = wires.get_lengths()
         wires_num = wires.count()
-        points_num = wires.count_unique_points()
+        points_num = wires.count_distinct_points()
         index = wires.get_bran_index()
 
         expected_start_points = np.array([[0, -0.4, 10], [0, 0.1, 10], [0, 0, 10.5], [0, 0.6, 10]])
@@ -294,7 +294,6 @@ class TestWiresMethods(unittest.TestCase):
         self.assertEqual(wires_num, expected_wires_num)
         self.assertEqual(points_num, expected_points_num)
         self.assertTrue(np.allclose(index, expected_index, rtol=1e-05))
-
 
 
 if __name__ == '__main__':

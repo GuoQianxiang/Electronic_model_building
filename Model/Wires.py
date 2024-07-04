@@ -11,7 +11,7 @@ from Node import Node
 # from Lump import Component
 
 class Wire:
-    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF):
+    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, L: float, sig: float, mur: float, epr: float, VF):
         """
         初始化管状线段对象
         
@@ -35,7 +35,7 @@ class Wire:
         self.offset = offset
         self.r = r
         self.R = R
-        self.L = l
+        self.L = L
         self.sig = sig
         self.mur = mur
         self.epr = epr
@@ -56,7 +56,6 @@ class Wire:
         打印线段对象信息。
         """
         print(f"Wire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here.)\n")
-
 
 
     def __repr__(self):
@@ -274,7 +273,7 @@ class Wires:
         return coordinates
 
 
-    def count_unique_airPoints(self):
+    def count_distinct_airPoints(self):
         """
         统计 Wires 对象中所有空气线段的起始点和终止点的总个数。
 
@@ -294,7 +293,7 @@ class Wires:
         return len(all_points)
 
 
-    def count_unique_gndPoints(self) -> int:
+    def count_distinct_gndPoints(self) -> int:
         """
         统计 Wires 对象中所有地线段的起始点和终止点的总个数。
 
@@ -314,7 +313,7 @@ class Wires:
         return len(all_points)
 
 
-    def count_unique_points(self) -> int:
+    def count_distinct_points(self) -> int:
         """
         统计 Wires 对象中所有线段的起始点和终止点的总个数。
 
@@ -324,34 +323,26 @@ class Wires:
         返回:
         int: 所有不重复点的总个数
         """
-        all_points = set()
+        return len(self.get_all_nodes())
 
-        # 统计 air_wires 中的点
-        for wire in self.air_wires:
-            all_points.add(wire.start_node)
-            all_points.add(wire.end_node)
+    
+    def get_all_nodes(self):
+        """
+        返回 Wires 对象中所有线段的所有点的集合。
 
-        # 统计 ground_wires 中的点
-        for wire in self.ground_wires:
-            all_points.add(wire.start_node)
-            all_points.add(wire.end_node)
+        参数:
+        wires (Wires): Wires 对象
 
-        # 统计 a2g_wires 中的点
-        for wire in self.a2g_wires:
-            all_points.add(wire.start_node)
-            all_points.add(wire.end_node)
-
-        # 统计 short_wires 中的点
-        for wire in self.short_wires:
-            all_points.add(wire.start_node)
-            all_points.add(wire.end_node)
-
-        # 统计 tube_wires 中的点
-        for wire in self.tube_wires:
-            all_points.add(wire.start_node)
-            all_points.add(wire.end_node)
-
-        return len(all_points)
+        返回:
+        all_nodes(set): 所有不重复点的集合
+        """
+        # 获取所有不重复的节点
+        all_nodes = set()
+        for wire_list in [self.air_wires, self.ground_wires, self.a2g_wires, self.short_wires, self.tube_wires]:
+            for wire in wire_list:
+                all_nodes.add(wire.start_node)
+                all_nodes.add(wire.end_node)
+        return all_nodes
 
 
     def count_a2gWires(self):
@@ -434,6 +425,32 @@ class Wires:
         for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
             lengths[i] = wire.length()
         return lengths
+
+
+    def get_resistance(self):
+        """
+        返回线段电阻矩阵,按照air、ground、a2g、short、tube的顺序。
+
+        返回:
+        impendence (numpy.narray, n*1): n条线段的电阻
+        """
+        resistance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            resistance[i] = wire.R
+        return resistance
+    
+    def get_inductance(self):
+        """
+        返回线段电感矩阵,按照air、ground、a2g、short、tube的顺序。
+
+        返回:
+        inductance (numpy.narray, n*1): n条线段的电感
+        """
+        inductance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+            inductance[i] = wire.L
+        return inductance
+
 
 
     def get_bran_coordinates(self):

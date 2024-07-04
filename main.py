@@ -3,6 +3,7 @@ from Model.Node import Node
 from Model.Wires import Wire, Wires
 from Model.Ground import Ground
 from Model.Contant import Constant
+from Model.Tower import Tower
 from Utils.Math import calculate_inductance, calculate_potential, calculate_wires_inductance_potential_with_ground
 
 
@@ -32,10 +33,10 @@ if __name__ == '__main__':
           'frq': frq}
 
     # 根据节点连接成线段
-    wire1 = Wire('Y01', node1, node2, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
-    wire2 = Wire('Y02', node3, node4, -0.4, 0.005, 0, 0, 58000000, 1, 1, VF)
-    wire3 = Wire('Y03', node5, node6, 0.1, 0.005, 0, 0, 58000000, 1, 1, VF)
-    wire4 = Wire('Y04', node7, node8, 0.6, 0.005, 0, 0, 58000000, 1, 1, VF)
+    wire1 = Wire('Y01', node1, node2, 0, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
+    wire2 = Wire('Y02', node3, node4, -0.4, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
+    wire3 = Wire('Y03', node5, node6, 0.1, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
+    wire4 = Wire('Y04', node7, node8, 0.6, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
 
     # 创建地面对象
     ground = Ground(1e-3, 1, 4, 'Lossy', 'weak', 'isolational')
@@ -43,37 +44,44 @@ if __name__ == '__main__':
     # 创建线段集合
     wires = Wires()
 
-    wires.add_a2g_wire(wire1)
+    wires.add_air_wire(wire1)
     wires.add_air_wire(wire2)
     wires.add_ground_wire(wire3)
-    wires.add_short_wire(wire4)
+    wires.add_ground_wire(wire4)
 
-    # 输出线段集合
-    # print(wires)
-
-    start_points = wires.get_start_points()
-    end_points = wires.get_end_points()
-    radii = wires.get_radii()
-    offsets = wires.get_offsets()
-    heights = wires.get_heights()
-    lengths = wires.get_lengths()
-    # print(lengths)
-    # print(wires.count())
-
-
-
-    L = calculate_inductance(start_points, end_points, radii, start_points, end_points, radii)
-    print(L)
-
-    index = wires.get_bran_index()
-    At = index[:, 1:3]
-    # print(At)
-
-    P = calculate_potential(start_points, end_points, lengths, radii, start_points, end_points, lengths, radii, At, 8)
-    print(P)
-    # print(wires.count_unique_points())
 
     constants = Constant()
-    L0, P0 = calculate_wires_inductance_potential_with_ground(wires, ground, constants)
-    print(L0)
-    print(P0)
+    L, P = calculate_wires_inductance_potential_with_ground(wires, ground, constants)
+
+    tower = Tower(None, wires, None, None, None, None,)
+    # A矩阵
+    print("------------------------------------------------")
+    print("A matrix:")
+    tower.initialize_incidence_matrix()
+    print(tower.incidence_matrix)
+    print("------------------------------------------------")
+
+    # L矩阵
+    print("------------------------------------------------")
+    print("L matrix:")
+    tower.initialize_inductance_matrix()
+    print(tower.inductance_matrix)
+    tower.update_inductance_matrix(L)
+    print(tower.inductance_matrix)
+    print("------------------------------------------------")
+
+    # R矩阵
+    print("------------------------------------------------")
+    print("R matrix:")
+    tower.initialize_resistance_matrix()
+    print(tower.resistance_matrix)
+    print("------------------------------------------------")
+
+    # P矩阵
+    print("------------------------------------------------")
+    print("P matrix")
+    tower.initialize_potential_matrix()
+    print(tower.potential_matrix)
+    tower.update_potential_matrix(P)
+    print(tower.potential_matrix)
+    print("------------------------------------------------")

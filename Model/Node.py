@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import re
 
 
 class Node:
@@ -17,14 +18,15 @@ class Node:
         self.x = x
         self.y = y
         self.z = z
-        
+        self.id = int(re.findall(r'\d+', self.name)[-1])
+
 
     def __repr__(self):
         """
         返回节点对象的字符串表示形式。
         """
         return f"Node(name='{self.name}', x={self.x}, y={self.y}, z={self.z})"
-    
+
 
 class MeasurementNode(Node):
     def __init__(self, name, x, y, z, type):

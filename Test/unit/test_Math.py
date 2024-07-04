@@ -90,7 +90,7 @@ class TestMath(unittest.TestCase):
         end_points = wires.get_end_points()
         radii = wires.get_radii()
         lengths = wires.get_lengths()
-        points_num = wires.count_unique_points()
+        points_num = wires.count_distinct_points()
 
         L = INT_SLAN_2D(start_points, end_points, radii, start_points, end_points, radii, 2, 2)
   
