@@ -65,33 +65,62 @@ class Wire:
         return f"Wire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here.)"
 
 
-class TubeWire(Wire):
-    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, l: float, sig: float, mur: float, epr: float, VF: int, outer_radius: float, overall_outer_radius: float, inner_radius: float, inner_offset: float, inner_angle: float):
+class CoreWire(Wire):
+    def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, L: float, sig: float, mur: float, epr: float, VF, inner_offset: float, inner_angle: float):
+        """
+        初始化管状线内部的芯线线段。
+
+        继承自Wire类,并添加以下参数:
+        inner_offset (float): 芯线距离中心的位置
+        inner_angle (float): 芯线的偏转角度
+        """
+        super().__init__(name, start_node, end_node, offset, r, R, L, sig, mur, epr, VF)
+        self.inner_offset = inner_offset
+        self.inner_angle = inner_angle
+    
+
+    def display(self):
+        """
+        打印线段对象信息。
+        """
+        print(f"    CoreWire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, VF_matrix is not showned here, inner_angle={self.inner_angle}, inner_offset={self.inner_offset})\n")
+
+
+class TubeWire():
+    def __init__(self, sheath: Wire, inner_radius: float, outer_radius: float, inner_num: int):
         """
         初始化管状线段对象。(同时满足cable中线段的定义)
         
-        继承自Wire类,并添加或修改以下参数:
-        原先的r参数表示为内径
-        outer_radius (float): 外径
-        overall_outer_radius (float): 整体外径
-        inner_radius (float): 芯线的半径
-        inner_offset (float): 芯线距离中心位置
-        inner_angle (float): 芯线角度
+        inner_radius (float): 不加套管厚度的内部外径
+        outer_radius (float): 添加了套管厚度的整体外径
+        inner_num (int): 内部芯线的数量
         """
-        super().__init__(name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF)
-        self.outer_radius = outer_radius
-        self.overall_outer_radius = overall_outer_radius
+        self.sheath = sheath
+        self.core_wires = []
         self.inner_radius = inner_radius
-        self.inner_offset = inner_offset
-        self.inner_angle = inner_angle
-        self.inner_num = 4
+        self.outer_radius = outer_radius
+        self.inner_num = inner_num
 
-    def __repr__(self):
+
+    def add_core_wire(self, wire: CoreWire):
         """
-        返回管状线段对象的字符串表示形式。
+        向管状线段中添加内部芯线线段。
+
+        Args:
+            wire (Wire): 要添加的芯线线段。
         """
-        return f"TubeWire(name='{self.name}', start_node={self.start_node}, end_node={self.end_node}, offset={self.offset}, r={self.r}, R={self.R}, L={self.L}, sig={self.sig}, mur={self.mur}, epr={self.epr}, inner_num={self.inner_num}, outer_radius={self.outer_radius}, overall_outer_radius={self.overall_outer_radius}, inner_radius={self.inner_radius}, inner_offset={self.inner_offset}, inner_angle={self.inner_angle}, VF_matrix is not showned here.)"
-    
+        if len(self.core_wires) >= self.inner_num:
+            raise ValueError("TubeWire can only have {} inner wires, but {} is added.".format(self.inner_num, len(self.core_wires) + 1))
+        self.core_wires.append(wire)
+
+
+    def display(self):
+        """
+        打印管状线段信息。
+        """
+        print(f"TubeWire(sheath={self.sheath}, inner_radius={self.inner_radius}, outer_radius={self.outer_radius}, inner_num={self.inner_num})\n")
+        for corewire in self.core_wires:
+            corewire.display()
 
 
 class OHLWire(Wire):
@@ -198,9 +227,10 @@ class Wires:
         """
         返回线段总数。
         """
+        # 此处认为管状线段为一条线段（未统计内部包含的线段）
         return len(self.air_wires) + len(self.ground_wires) + len(self.tube_wires) + len(self.a2g_wires) + len(self.short_wires)
 
-    
+
     def get_node_names(self):
         """
         返回结点名字列表,按照air、ground、tube、a2g、short的顺序。
@@ -222,7 +252,9 @@ class Wires:
 
         # 处理管状线段
         for wire in self.tube_wires:
-            node_names.extend([wire.start_node.name, wire.end_node.name])
+            node_names.extend([wire.sheath.start_node.name, wire.sheath.end_node.name])
+            for core_wire in wire.core_wires:
+                node_names.extend([core_wire.start_node.name, core_wire.end_node.name])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
@@ -256,9 +288,12 @@ class Wires:
                                 (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
 
         # 处理管状线段
-        for wire in self.tube_wires:
-            coordinates.extend([(wire.start_node.x, wire.start_node.y, wire.start_node.z),
-                                (wire.end_node.x, wire.end_node.y, wire.end_node.z)])
+        for tubewire in self.tube_wires:
+            coordinates.extend([(tubewire.sheath.start_node.x, tubewire.sheath.start_node.y, tubewire.sheath.start_node.z),
+                                (tubewire.sheath.end_node.x, tubewire.sheath.end_node.y, tubewire.sheath.end_node.z)])
+            for core_wire in tubewire.core_wires:
+                coordinates.extend([(core_wire.start_node.x, core_wire.start_node.y, core_wire.start_node.z),
+                                    (core_wire.end_node.x, core_wire.end_node.y, core_wire.end_node.z)])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
@@ -336,12 +371,19 @@ class Wires:
         返回:
         all_nodes(set): 所有不重复点的集合
         """
-        # 获取所有不重复的节点
+        # 获取所有不重复的节点(包含管状线段内部线段的起始点和终止点)
         all_nodes = set()
-        for wire_list in [self.air_wires, self.ground_wires, self.a2g_wires, self.short_wires, self.tube_wires]:
+        for wire_list in [self.air_wires, self.ground_wires, self.a2g_wires, self.short_wires]:
             for wire in wire_list:
                 all_nodes.add(wire.start_node)
                 all_nodes.add(wire.end_node)
+        
+        for tubewire in self.tube_wires:
+            all_nodes.add(tubewire.sheath.start_node)
+            all_nodes.add(tubewire.sheath.end_node)
+            for core_wire in tubewire.core_wires:
+                all_nodes.add(core_wire.start_node)
+                all_nodes.add(core_wire.end_node)
         return all_nodes
 
 
@@ -363,79 +405,91 @@ class Wires:
 
     def get_start_points(self):
         """
-        返回起始点结点坐标矩阵,按照air、ground、tube、a2g、short的顺序。
-
+        返回起始点结点坐标矩阵,按照air、ground、a2g、short的顺序。
+        管状线段单独处理,此处跳过。
         返回:
         start_points (numpy.narray, n*3): n条线段的起始点结点坐标矩阵,每行为(x, y, z)
         """
-        start_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        start_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             start_points[i] = [wire.start_node.x, wire.start_node.y, wire.start_node.z]
         return start_points
 
 
     def get_end_points(self):
         """
-        返回终止点结点坐标矩阵,按照air、ground、tube、a2g、short的顺序。
+        返回终止点结点坐标矩阵,按照air、ground、a2g、short的顺序。
 
         返回:
         end_points (numpy.narray, n*3): n条线段的终止点结点坐标矩阵,每行为(x, y, z)
         """
-        end_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        end_points = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             end_points[i] = [wire.end_node.x, wire.end_node.y, wire.end_node.z]
         return end_points
 
 
     def get_radii(self):
         """
-        返回线段集合的内径矩阵,按照air、ground、tube、a2g、short的顺序。
+        返回线段集合的内径矩阵,按照air、ground、a2g、short的顺序。
 
         返回:
         radii (numpy.narray, n*1): n条线段的内径矩阵,每行为某一条线段的内径
         """
-        radii = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        radii = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             radii[i] = wire.r
         return radii
 
 
     def get_heights(self):
-        heights = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        """
+        返回线段高度矩阵,按照air、ground、a2g、short的顺序。
+
+        返回:
+        heights (numpy.narray, n*1): n条线段的高度
+        """
+        heights = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             heights[i] = wire.height
         return heights
 
 
     def get_offsets(self):
-        offsets = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        """
+        返回线段偏置矩阵,按照air、ground、a2g、short的顺序。
+
+        返回:
+        offsets (numpy.narray, n*1): n条线段的偏置
+        """
+        offsets = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             offsets[i] = wire.offset
         return offsets
 
 
     def get_lengths(self):
         """
-        返回线段长度矩阵,按照air、ground、tube、a2g、short的顺序。
+        返回线段长度矩阵,按照air、ground、a2g、short的顺序。
 
         返回:
         lengths (numpy.narray, n*1): n条线段的长度
         """
-        lengths = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        lengths = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             lengths[i] = wire.length()
         return lengths
 
 
     def get_resistance(self):
         """
-        返回线段电阻矩阵,按照air、ground、a2g、short、tube的顺序。
+        返回线段电阻矩阵,按照air、ground、a2g、short的顺序。
 
         返回:
         impendence (numpy.narray, n*1): n条线段的电阻
         """
-        resistance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        resistance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             resistance[i] = wire.R
         return resistance
     
@@ -446,8 +500,8 @@ class Wires:
         返回:
         inductance (numpy.narray, n*1): n条线段的电感
         """
-        inductance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 1))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        inductance = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 1))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             inductance[i] = wire.L
         return inductance
 
@@ -473,8 +527,10 @@ class Wires:
             coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
 
         # 处理管状线段
-        for wire in self.tube_wires:
-            coordinates.extend([(wire.name, wire.start_node.name, wire.end_node.name)])
+        for tubewire in self.tube_wires:
+            coordinates.extend([(tubewire.sheath.name, tubewire.sheath.start_node.name, tubewire.sheath.end_node.name)])
+            for corewire in tubewire.core_wires:
+                coordinates.extend([(corewire.name, corewire.start_node.name, corewire.end_node.name)])
 
         # 处理空气到地线段
         for wire in self.a2g_wires:
@@ -491,7 +547,7 @@ class Wires:
         """
         返回按照下列格式所有线段（支路）的信息汇总列表：
         【线段名最后的有效数字位，起始节点名最后的有效数字位，终止节点名最后的有效数字位】,
-        按照air、ground、tube、a2g、short的顺序。
+        按照air、ground、a2g、short的顺序。
 
         返回:
         coordinates (list): 信息汇总列表,每个元素为(1, 1, 2)
@@ -499,8 +555,8 @@ class Wires:
         coordinates = []
 
         # 要求按照特定顺序进行拼接,因此分别进行for循环。
-        coordinates = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires), 3))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires + self.tube_wires):
+        coordinates = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 3))
+        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
             wire_num = int(re.findall(r'\d+', wire.name)[-1])
             start_num = int(re.findall(r'\d+', wire.start_node.name)[-1])
             end_num = int(re.findall(r'\d+', wire.end_node.name)[-1])
@@ -537,13 +593,108 @@ class Wires:
                     start_node = end_node
 
         return new_wires
+    
+
+    def split_tubewires(self, tubewires, max_length):
+        """
+        将输入的 TubeWire 列表切分成长度不超过 max_length 的新 TubeWire 列表。
+
+        参数:
+        tubewires (List[TubeWire]): 需要切分的 TubeWire 列表
+        max_length (float): 每个 TubeWire 的最大长度
+
+        返回:
+        List[TubeWire]: 切分后的新 TubeWire 列表
+        """
+        new_tubewires = []
+
+        for tubewire in tubewires:
+            sheath = tubewire.sheath
+            sheath_start_node = sheath.start_node
+            sheath_end_node = sheath.end_node
+            length = sheath.length()
+
+            if length <= max_length:
+                new_tubewires.append(tubewire)
+            else:
+                # 计算切分的段数
+                num_segments = math.ceil(length / max_length)
+                dx = (sheath_end_node.x - sheath_start_node.x) / num_segments
+                dy = (sheath_end_node.y - sheath_start_node.y) / num_segments
+                dz = (sheath_end_node.z - sheath_start_node.z) / num_segments
+
+                # 切分 sheath
+                for i in range(num_segments):
+                    start_point = sheath_start_node
+                    end_point = sheath_end_node
+
+
+                    new_sheath = Wire(
+                        name=f"{sheath.name}_Splited_{i+1}",
+                        start_node=start_point if i == 0 else Node(name=f"{sheath.name}_MiddleNode_{i}",
+                                                                   x = start_point.x + i*dx,
+                                                                   y = start_point.y + i*dy,
+                                                                   z = start_point.z + i*dz),
+                        end_node=end_point if i == num_segments-1 else Node(name=f"{sheath.name}_MiddleNode_{i+1}",
+                                                                            x = start_point.x + (i+1)*dx,
+                                                                            y = start_point.y + (i+1)*dy,
+                                                                            z = start_point.z + (i+1)*dz),
+                        offset=sheath.offset,
+                        r=sheath.r,
+                        R=sheath.R,
+                        L=sheath.L,
+                        sig=sheath.sig,
+                        mur=sheath.mur,
+                        epr=sheath.epr,
+                        VF=sheath.VF
+                    )
+
+                    # 切分 core_wires
+                    new_core_wires = []
+                    for core_wire in tubewire.core_wires:
+                        start_point = core_wire.start_node
+                        end_point = core_wire.end_node
+                        new_core_wire = CoreWire(
+                            name=f"{core_wire.name}_Splited_{i+1}",
+                            start_node=start_point if i == 0 else Node(name=f"{core_wire.name}_MiddleNode_{i}",
+                                                                       x = start_point.x+ i*dx,
+                                                                       y = start_point.y+ i*dy,
+                                                                       z = start_point.z+ i*dz),
+                            end_node=end_point if i == num_segments-1 else Node(name=f"{core_wire.name}_MiddleNode_{i+1}",
+                                                                                x = start_point.x+ (i+1)*dx,
+                                                                                y = start_point.y+ (i+1)*dy,
+                                                                                z = start_point.z+ (i+1)*dz),
+                            offset=core_wire.offset,
+                            r=core_wire.r,
+                            R=core_wire.R,
+                            L=core_wire.L,
+                            sig=core_wire.sig,
+                            mur=core_wire.mur,
+                            epr=core_wire.epr,
+                            VF=core_wire.VF,
+                            inner_offset=core_wire.inner_offset,
+                            inner_angle=core_wire.inner_angle
+                        )
+                        new_core_wires.append(new_core_wire)
+
+                    new_tubewire = TubeWire(
+                        sheath=new_sheath,
+                        inner_radius=tubewire.inner_radius,
+                        outer_radius=tubewire.outer_radius,
+                        inner_num=tubewire.inner_num
+                    )
+                    new_tubewire.core_wires = new_core_wires
+                    new_tubewires.append(new_tubewire)
+
+        return new_tubewires
+
 
     def split_long_wires_all(self, max_length):
         self.air_wires = self.split_long_wires(self.air_wires, max_length)
         self.ground_wires = self.split_long_wires(self.ground_wires, max_length)
         self.a2g_wires = self.split_long_wires(self.a2g_wires, max_length)
         self.short_wires = self.split_long_wires(self.short_wires, max_length)
-        self.tube_wires = self.split_long_wires(self.tube_wires, max_length)
+        self.tube_wires = self.split_tubewires(self.tube_wires, max_length)
 
 
     def __repr__(self):

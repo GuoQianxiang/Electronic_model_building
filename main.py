@@ -1,6 +1,6 @@
 import numpy as np
 from Model.Node import Node
-from Model.Wires import Wire, Wires
+from Model.Wires import Wire, Wires, CoreWire, TubeWire
 from Model.Ground import Ground
 from Model.Contant import Constant
 from Model.Tower import Tower
@@ -17,6 +17,16 @@ if __name__ == '__main__':
     node6 = Node('X06', 1000, 0.1, 10)
     node7 = Node('X07', 0, 0.6, 10)
     node8 = Node('X08', 1000, 0.6, 10)
+    # 表皮的起点和终点
+    node9 = Node("X52", 10, 0, 0)
+    node10 = Node("X56", 10, 0, 100)
+    #三条芯线的起点和终点
+    node11 = Node("X53", 10, 0, 0)
+    node12 = Node("X57", 10, 0, 100)
+    node13 = Node("X54", 10, 0, 0)
+    node14 = Node("X58", 10, 0, 100)
+    node15 = Node("X55", 10, 0, 0)
+    node16 = Node("X59", 10, 0, 100)
 
     # 初始化向量拟合参数
     frq = np.concatenate([
@@ -38,6 +48,16 @@ if __name__ == '__main__':
     wire3 = Wire('Y03', node5, node6, 0.1, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
     wire4 = Wire('Y04', node7, node8, 0.6, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
 
+    # 创建套管线段集合
+    core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)
+    core_wire2 = CoreWire("Y12", node13, node14, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 0)
+    core_wire3 = CoreWire("Y13", node15, node16, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 5)
+    sheath_wire = Wire("Y10", node9, node10, 0, 2, 0, 0, 1e7, 50, 1, VF)
+    tube_wire1 = TubeWire(sheath_wire, 2.05, 2.1, 3)
+    tube_wire1.add_core_wire(core_wire1)
+    tube_wire1.add_core_wire(core_wire2)
+    tube_wire1.add_core_wire(core_wire3)
+
     # 创建地面对象
     ground = Ground(1e-3, 1, 4, 'Lossy', 'weak', 'isolational')
 
@@ -48,12 +68,13 @@ if __name__ == '__main__':
     wires.add_air_wire(wire2)
     wires.add_ground_wire(wire3)
     wires.add_ground_wire(wire4)
+    # wires.add_tube_wire(tube_wire1)
 
 
     constants = Constant()
-    L, P = calculate_wires_inductance_potential_with_ground(wires, ground, constants)
 
     tower = Tower(None, wires, None, None, None, None,)
+    L, P = calculate_wires_inductance_potential_with_ground(tower.wires, ground, constants)
     # A矩阵
     print("------------------------------------------------")
     print("A matrix:")

@@ -2,7 +2,7 @@ import sys
 sys.path.append('../..')
 import unittest
 from Model.Node import Node, MeasurementNode
-from Model.Wires import Wire, TubeWire, Wires, LumpWire
+from Model.Wires import Wire, TubeWire, Wires, LumpWire, CoreWire
 from Model.Ground import Ground
 from Model.Cable import Cable
 from Model.OHL import OHL
@@ -59,27 +59,31 @@ class TestNodeWire(unittest.TestCase):
 
     def test_tube_wire_initialization(self):
         # 测试TubeWire类的初始化
-        start_node = Node("X01", 10.5, 20.3, 15.7)
-        end_node = Node("X02", -5.2, 8.9, 2.1)
-        tube_wire = TubeWire("Test Tube Wire", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
-
-        self.assertEqual(tube_wire.name, "Test Tube Wire")
-        self.assertEqual(tube_wire.start_node, start_node)
-        self.assertEqual(tube_wire.end_node, end_node)
-        self.assertEqual(tube_wire.r, 0.5)
-        self.assertEqual(tube_wire.R, 10.0)
-        self.assertEqual(tube_wire.L, 1e-9)
-        self.assertEqual(tube_wire.sig, 1e7)
-        self.assertEqual(tube_wire.mur, 1.0)
-        self.assertEqual(tube_wire.epr, 2.1)
-        self.assertEqual(tube_wire.VF, [1, 2, 3, 4])
-        self.assertEqual(tube_wire.outer_radius, 1.0)
-        self.assertEqual(tube_wire.overall_outer_radius, 1.5)
-        self.assertEqual(tube_wire.inner_radius, 0.2)
-        self.assertEqual(tube_wire.inner_offset, 0.3)
-        self.assertEqual(tube_wire.inner_angle, 45.0)
-        # 测试重写后的静态变量
-        self.assertEqual(tube_wire.inner_num, 4)
+        # 表皮的起点和终点
+        node9 = Node("X52", 10, 0, 0)
+        node10 = Node("X56", 10, 0, 100)
+        #三条芯线的起点和终点
+        node11 = Node("X53", 10, 0, 0)
+        node12 = Node("X57", 10, 0, 100)
+        node13 = Node("X54", 10, 0, 0)
+        node14 = Node("X58", 10, 0, 100)
+        node15 = Node("X55", 10, 0, 0)
+        node16 = Node("X59", 10, 0, 100)
+        # 创建套管线段集合
+        VF = {}
+        core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)
+        core_wire2 = CoreWire("Y12", node13, node14, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 0)
+        core_wire3 = CoreWire("Y13", node15, node16, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 5)
+        sheath_wire = Wire("Y10", node9, node10, 0, 2, 0, 0, 1e7, 50, 1, VF)
+        tube_wire1 = TubeWire(sheath_wire, 2.05, 2.1, 3)
+        tube_wire1.add_core_wire(core_wire1)
+        tube_wire1.add_core_wire(core_wire2)
+        tube_wire1.add_core_wire(core_wire3)
+        # 测试类变量
+        self.assertEqual(tube_wire1.inner_radius, 2.05)
+        self.assertEqual(tube_wire1.outer_radius, 2.1)
+        self.assertEqual(tube_wire1.inner_num, 3)
+        # to be tested
 
 
     def test_wires_initialization(self):
@@ -87,7 +91,26 @@ class TestNodeWire(unittest.TestCase):
         start_node = Node("X01", 10.5, 20.3, 15.7)
         end_node = Node("X02", -5.2, 8.9, 2.1)
         air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
-        tube_wire = TubeWire("Tube Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        # 表皮的起点和终点
+        node9 = Node("X52", 10, 0, 0)
+        node10 = Node("X56", 10, 0, 100)
+        #三条芯线的起点和终点
+        node11 = Node("X53", 10, 0, 0)
+        node12 = Node("X57", 10, 0, 100)
+        node13 = Node("X54", 10, 0, 0)
+        node14 = Node("X58", 10, 0, 100)
+        node15 = Node("X55", 10, 0, 0)
+        node16 = Node("X59", 10, 0, 100)
+        # 创建套管线段集合
+        VF = {}
+        core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)
+        core_wire2 = CoreWire("Y12", node13, node14, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 0)
+        core_wire3 = CoreWire("Y13", node15, node16, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 5)
+        sheath_wire = Wire("Y10", node9, node10, 0, 2, 0, 0, 1e7, 50, 1, VF)
+        tube_wire1 = TubeWire(sheath_wire, 2.05, 2.1, 3)
+        tube_wire1.add_core_wire(core_wire1)
+        tube_wire1.add_core_wire(core_wire2)
+        tube_wire1.add_core_wire(core_wire3)
 
         # 测试默认初始化
         wires = Wires()
@@ -98,12 +121,12 @@ class TestNodeWire(unittest.TestCase):
         self.assertEqual(wires.tube_wires, [])
 
         # 测试参数初始化
-        wires = Wires([air_wire], [], [], [], [tube_wire])
+        wires = Wires([air_wire], [], [], [], [tube_wire1])
         self.assertEqual(wires.air_wires, [air_wire])
         self.assertEqual(wires.ground_wires, [])
         self.assertEqual(wires.a2g_wires, [])
         self.assertEqual(wires.short_wires, [])
-        self.assertEqual(wires.tube_wires, [tube_wire])
+        self.assertEqual(wires.tube_wires, [tube_wire1])
 
 
 # class TestTower(unittest.TestCase):
@@ -173,10 +196,28 @@ class TestWiresMethods(unittest.TestCase):
         # 创建测试数据
         start_node = Node("X01", 10.5, 20.3, 15.7)
         end_node = Node("X02", -5.2, 8.9, 2.1)
-        node3 = Node("X03", -5.0, 8.0, 2.0)
-        node4 = Node("X04", -15.2, 18.9, 12.1)
         air_wire = Wire("Air Wire 1", start_node, end_node, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
-        tube_wire = TubeWire("Tube Wire 1", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        
+        # 表皮的起点和终点
+        node9 = Node("X52", 10, 0, 0)
+        node10 = Node("X56", 10, 0, 100)
+        #三条芯线的起点和终点
+        node11 = Node("X53", 10, 0, 0)
+        node12 = Node("X57", 10, 0, 100)
+        node13 = Node("X54", 10, 0, 0)
+        node14 = Node("X58", 10, 0, 100)
+        node15 = Node("X55", 10, 0, 0)
+        node16 = Node("X59", 10, 0, 100)
+        # 创建套管线段集合
+        VF = {}
+        core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)
+        core_wire2 = CoreWire("Y12", node13, node14, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 0)
+        core_wire3 = CoreWire("Y13", node15, node16, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 5)
+        sheath_wire = Wire("Y10", node9, node10, 0, 2, 0, 0, 1e7, 50, 1, VF)
+        tube_wire1 = TubeWire(sheath_wire, 2.05, 2.1, 3)
+        tube_wire1.add_core_wire(core_wire1)
+        tube_wire1.add_core_wire(core_wire2)
+        tube_wire1.add_core_wire(core_wire3)
 
         # 测试空的Wires对象
         empty_wires = Wires()
@@ -185,11 +226,11 @@ class TestWiresMethods(unittest.TestCase):
         self.assertEqual(empty_wires.get_bran_coordinates(), [])
 
         # 测试包含线段的Wires对象
-        wires = Wires([air_wire], [], [tube_wire], [], [])
+        wires = Wires([air_wire], [], [], [], [tube_wire1])
 
-        expected_node_names = ['X01', 'X02', 'X03', 'X04']
-        expected_coordinates = [(10.5, 20.3, 15.7), (-5.2, 8.9, 2.1), (-5.0, 8.0, 2.0), (-15.2, 18.9, 12.1)]
-        expected_bran_coordinates = [("Air Wire 1", 'X01', 'X02'), ("Tube Wire 1", 'X03', 'X04')]
+        expected_node_names = ['X01', 'X02', 'X52', 'X56', 'X53', 'X57', 'X54', 'X58', 'X55', 'X59']
+        expected_coordinates = [(10.5, 20.3, 15.7), (-5.2, 8.9, 2.1), (10, 0, 0), (10, 0, 100), (10, 0, 0), (10, 0, 100), (10, 0, 0), (10, 0, 100), (10, 0, 0), (10, 0, 100),]
+        expected_bran_coordinates = [("Air Wire 1", 'X01', 'X02'), ("Y10", 'X52', 'X56'), ("Y11", "X53", "X57"), ("Y12", "X54", "X58"), ("Y13", "X55", "X59")]
 
         self.assertEqual(wires.get_node_names(), expected_node_names)
         self.assertEqual(wires.get_node_coordinates(), expected_coordinates)
@@ -200,16 +241,33 @@ class TestWiresMethods(unittest.TestCase):
         # 初始化点
         node1 = Node('X01', 0, 0, 0)
         node2 = Node('X02', 10, 0, 0)
-        node3 = Node('X03', 0, 0, 0)
-        node4 = Node('X04', 15, 0, 0)
         # 根据点初始化线
         air_wire = Wire("Y01", node1, node2, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4])
-        tube_wire = TubeWire("Y02", node3, node4, 1.0, 0.5, 10.0, 1e-9, 1e7, 1.0, 2.1, [1, 2, 3, 4], 1.0, 1.5, 0.2, 0.3, 45.0)
+        # 表皮的起点和终点
+        node9 = Node("X52", 10, 0, 0)
+        node10 = Node("X56", 10, 0, 15)
+        #三条芯线的起点和终点
+        node11 = Node("X53", 10, 0, 0)
+        node12 = Node("X57", 10, 0, 15)
+        node13 = Node("X54", 10, 0, 0)
+        node14 = Node("X58", 10, 0, 15)
+        node15 = Node("X55", 10, 0, 0)
+        node16 = Node("X59", 10, 0, 15)
+        # 创建套管线段集合
+        VF = {}
+        core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)
+        core_wire2 = CoreWire("Y12", node13, node14, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 0)
+        core_wire3 = CoreWire("Y13", node15, node16, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, 5)
+        sheath_wire = Wire("Y10", node9, node10, 0, 2, 0, 0, 1e7, 50, 1, VF)
+        tube_wire1 = TubeWire(sheath_wire, 2.05, 2.1, 3)
+        tube_wire1.add_core_wire(core_wire1)
+        tube_wire1.add_core_wire(core_wire2)
+        tube_wire1.add_core_wire(core_wire3)
         # 创建Wires对象
         wires = Wires()
         # 将导线按照其位置，添加到Wires集合中。
         wires.add_air_wire(air_wire)
-        wires.add_tube_wire(tube_wire)
+        wires.add_tube_wire(tube_wire1)
         # print("----------------------------------------------------------------")
         # wires.display()
         # print("----------------------------------------------------------------")
@@ -239,6 +297,15 @@ class TestWiresMethods(unittest.TestCase):
         self.assertEqual(wires.air_wires[1].start_node.z, 0.0)
         self.assertEqual(wires.air_wires[1].end_node, node2)
 
+        # 测试tubeWire的切分，应当被分为三段相等的tubeWire
+        self.assertEqual(wires.tube_wires[0].sheath.start_node, node9)
+        self.assertEqual(wires.tube_wires[2].sheath.end_node, node10)
+        self.assertEqual(wires.tube_wires[0].core_wires[0].start_node, node11)
+        self.assertEqual(wires.tube_wires[2].core_wires[0].end_node, node12)
+        self.assertEqual(wires.tube_wires[0].core_wires[0].name, "Y11_Splited_1")
+        self.assertEqual(wires.tube_wires[0].core_wires[0].end_node.name, "Y11_MiddleNode_1")
+        self.assertEqual(wires.tube_wires[2].core_wires[0].name, "Y11_Splited_3")
+        self.assertEqual(wires.tube_wires[2].core_wires[0].start_node.name, "Y11_MiddleNode_2")
 
     def test_Wires_get_parameters_matrix(self):
         # 初始化节点数据
