@@ -9,14 +9,14 @@ from Utils.Math import calculate_inductance, calculate_potential, calculate_wire
 
 if __name__ == '__main__':
     # 初始化节点数据
-    node1 = Node('X01', 0, 0, 10.5)
-    node2 = Node('X02', 1000, 0, 10.5)
-    node3 = Node('X03', 0, -0.4, 10)
-    node4 = Node('X04', 1000, -0.4, 10)
-    node5 = Node('X05', 0, 0.1, 10)
-    node6 = Node('X06', 1000, 0.1, 10)
-    node7 = Node('X07', 0, 0.6, 10)
-    node8 = Node('X08', 1000, 0.6, 10)
+    node1 = Node('X01', 0, -0.4, 10)
+    node2 = Node('X02', 0, -0.4, 9.8)
+    node3 = Node('X03', 0, 0.1, 10)
+    node4 = Node('X04', 0, 0.1, -1)
+    node5 = Node('X05', 0, 0.6, -1)
+    node6 = Node('X06', 0, 0.7, -1)
+    node7 = Node('X07', 0, -0.4, 9.8)
+    node8 = Node('X08', 0, 0, 9.8)
     # 表皮的起点和终点
     node9 = Node("X52", 10, 0, 0)
     node10 = Node("X56", 10, 0, 100)
@@ -43,10 +43,11 @@ if __name__ == '__main__':
           'frq': frq}
 
     # 根据节点连接成线段
-    wire1 = Wire('Y01', node1, node2, 0, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
-    wire2 = Wire('Y02', node3, node4, -0.4, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
-    wire3 = Wire('Y03', node5, node6, 0.1, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
-    wire4 = Wire('Y04', node7, node8, 0.6, 0.005, 0.001, 1e-6, 58000000, 1, 1, VF)
+    wire1 = Wire('Y01', node1, node2, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
+    wire2 = Wire('Y02', node2, node3, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
+    # 注意，空气和地面的线段不能相连、连接部分为a2g线段，后续添加一并处理
+    wire3 = Wire('Y03', node4, node5, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
+    wire4 = Wire('Y04', node5, node6, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
 
     # 创建套管线段集合
     core_wire1 = CoreWire("Y11", node11, node12, 0, 0.0087, 0, 0, 58000000, 1, 1, VF, 1.9, -5)

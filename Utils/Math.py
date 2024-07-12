@@ -368,7 +368,7 @@ def calculate_potential(ps1, ps2, ls, rs, pf1, pf2, lf, rf, At, Nnode):
     npf2 = np.zeros((N, 3))
     ncom = np.zeros((Nnode, 1))
 
-    for ik in range(1, Nnode + 1):  # size of node segments for source
+    for ik in range(int(np.min(At)), int(np.min(At))+Nnode):  # size of node segments for source
         pt1 = np.where(At[:, 0] == ik)[0]  # pos of ith node in branch
         pt2 = np.where(At[:, 1] == ik)[0]  # pos of ith node in branch
         d1 = len(pt1)  # total # of common nodes for ith node
@@ -402,7 +402,7 @@ def calculate_potential(ps1, ps2, ls, rs, pf1, pf2, lf, rf, At, Nnode):
             npf2[indices, 0:3] = pf2[pt2, 0:3]  # end points
 
         ofs += d2
-        ncom[ik - 1] = d1 + d2  # of segments for each node
+        ncom[ik - int(np.min(At)) - 1] = d1 + d2  # of segments for each node
 
     # (4) Calculating potential matrix
     PROD_MOD = 2  # matrix product
@@ -531,11 +531,14 @@ def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, const
         pf2 = end_points.copy()
         pf2[:, 2] = -pf2[:, 2]  # image for gnd segments
 
-        tmp = pf1[:, 2] + pf2[:, 2]  # image on the ground surface
-        if (tmp < min(radii)).all():
-            pf1[:, 2] = -2 * max(radii)
-            pf2[:, 2] = -2 * max(radii)
-        del tmp
+        # 计算tmp  
+        tmp = 0.5 * np.abs(pf1[:, 2] + pf2[:, 2])  # 注意MATLAB的索引从1开始，Python从0开始，所以这里是[:, 2]  
+        
+        # 遍历tmp和rs的索引  
+        for ik in range(len(tmp)):  
+            if tmp[ik] < radii[ik]:  
+                pf1[ik, 2] = -2.2 * radii[ik]  # 设置间隔为2*rs  
+                pf2[ik, 2] = -2.2 * radii[ik]  # 设置间隔为2*rs  
 
         # L and P matrices for air and gnd segments
         Lai = calculate_inductance(start_points[rb1, :], end_points[rb1, :], radii[rb1, 0], pf1[rb1, :], pf2[rb1, :], radii[rb1, 0])
