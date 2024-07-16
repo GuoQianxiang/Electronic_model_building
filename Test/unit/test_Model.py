@@ -10,6 +10,7 @@ from Model.OHL import OHL
 from Model.Tower import Tower
 from Model.Info import TowerInfo
 from Model.Device import Device
+from Model.Lightning import Lightning, Stroke
 import numpy as np
 
 
@@ -361,6 +362,24 @@ class TestWiresMethods(unittest.TestCase):
         self.assertEqual(wires_num, expected_wires_num)
         self.assertEqual(points_num, expected_points_num)
         self.assertTrue(np.allclose(index, expected_index, rtol=1e-05))
+
+
+class TestLightning(unittest.TestCase):
+    def test_Lightning_init(self):
+        # 创建一个8/20us的脉冲
+        stroke1 = Stroke(stroke_type='CIGRE', duration=20e-6, is_calculated=True, parameter_set='8/20us')
+
+        # 创建一个2.6/50us的脉冲
+        stroke2 = Stroke(stroke_type='CIGRE', duration=50e-6, is_calculated=True, parameter_set='2.6/50us')
+
+        # 创建一个雷电对象,包含上面两个脉冲
+        lightning = Lightning(1, "Direct", [stroke1])
+        lightning.add_stroke(stroke2)
+
+        # 计算雷电在某个时间点的总波形
+        time = 15e-6
+        total_waveform = lightning.total_waveform(time)
+        self.assertEqual(0.9999992905132296, total_waveform)
 
 
 if __name__ == '__main__':
