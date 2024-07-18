@@ -24,20 +24,21 @@ class Stroke:
         参数说明:
         stroke_type (str): 脉冲的类型, 目前只支持 'CIGRE' 和 'Heidler'
         duration (float): 脉冲持续时间
-        is_calculated (bool): 脉冲是否已被计算
+        is_calculated (bool): 脉冲是否要被计算
         parameter_set (str): 脉冲参数集, 目前只支持 '0.25/100us', '8/20us', '2.6/50us', '10/350us'
         parameters (list, optional): 脉冲参数, 仅在 'CIGRE' 和 'Heidler' 类型时使用, parameter_set被指定时, 请勿初始化该参数, 如想测试parameter_set之外的参数集, 请在此处初始化参数列表
         """
         self.stroke_type = stroke_type
         self.duration = duration
         self.is_calculated = is_calculated
-
-        if stroke_type == 'CIGRE':
-            self.parameters = StrokeParameters.CIGRE_PARAMETERS[parameter_set]
-        elif stroke_type == 'Heidler':
-            self.parameters = StrokeParameters.HEIDLER_PARAMETERS[parameter_set]
-        else:
-            raise ValueError("Invalid stroke type. Must be 'CIGRE' or 'Heidler'.")
+        # parameter_set与parameters二选一传入，最终决定参数列表归属
+        if parameter_set:
+            if stroke_type == 'CIGRE':
+                self.parameters = StrokeParameters.CIGRE_PARAMETERS[parameter_set]
+            elif stroke_type == 'Heidler':
+                self.parameters = StrokeParameters.HEIDLER_PARAMETERS[parameter_set]
+            else:
+                raise ValueError("Invalid stroke type. Must be 'CIGRE' or 'Heidler'.")
 
         if parameters:
             self.parameters = parameters

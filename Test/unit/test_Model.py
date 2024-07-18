@@ -372,14 +372,17 @@ class TestLightning(unittest.TestCase):
         # 创建一个2.6/50us的脉冲
         stroke2 = Stroke(stroke_type='CIGRE', duration=50e-6, is_calculated=True, parameter_set='2.6/50us')
 
+        stroke3 = Stroke(stroke_type='CIGRE', duration=10e-6, is_calculated=True, parameter_set=None, parameters=[0.25, 100, 6.4, 2, 0.9, 30, 0.5, 80, 2, 0.7])
+
         # 创建一个雷电对象,包含上面两个脉冲
         lightning = Lightning(1, "Direct", [stroke1])
         lightning.add_stroke(stroke2)
+        lightning.add_stroke(stroke3)
 
         # 计算雷电在某个时间点的总波形
         time = 15e-6
         total_waveform = lightning.total_waveform(time)
-        self.assertEqual(0.9999992905132296, total_waveform)
+        self.assertEqual(1.6999990164628942, total_waveform)
 
 
 if __name__ == '__main__':
