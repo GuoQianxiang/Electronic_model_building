@@ -1,7 +1,45 @@
 import math
 import numpy as np
 import numpy.matlib
-from Model import Wires
+from Model.Wires import Wires
+
+
+def Bessel_K2(z, n1, n2):
+    """
+    【函数功能】修正的第二类Bessel函数相除Kn-1(z)/Kn(z)近似表达
+    【入参】
+    z(float): Bessel函数变量
+    n1(int): 分子的Bessel函数阶数
+    n2(int): 分母的Bessel函数阶数
+
+    【出参】
+    K2(float): Kn-1(z)/Kn(z)近似表达
+    """
+    K2 = (1 + ((4 * n1 ** 2 - 1) / (8 * z)) + ((4 * n1 ** 2 - 1) * (4 * n1 ** 2 - 9) / (2 * (8 * z) ** 2)) + (
+            (4 * n1 ** 2 - 1) * (4 * n1 ** 2 - 9) * (4 * n1 ** 2 - 25) / (6 * (8 * z) ** 3))) / (
+                 1 + ((4 * n2 ** 2 - 1) / (8 * z)) + (
+                 (4 * n2 ** 2 - 1) * (4 * n2 ** 2 - 9) / (2 * (8 * z) ** 2)) + (
+                         (4 * n2 ** 2 - 1) * (4 * n2 ** 2 - 9) * (4 * n2 ** 2 - 25) / (6 * (8 * z) ** 3)))
+    return K2
+
+
+def Bessel_IK(z1, n1, z2, n2):
+    """
+    【函数功能】修正的第一类Bessel函数和第二类Bessel函数相乘，In1(z1)*Kn2(z2)近似表达
+    【入参】
+    z1(float): 第一类Bessel函数变量
+    n1(int): 第一类BBessel函数阶数
+    z2(float): 第二类Bessel函数变量
+    n2(int): 第二类Bessel函数阶数
+
+    【出参】
+    IK(float): In1(z1)*Kn2(z2)近似表达
+    """
+    IK = np.exp(z1 - z2) / 2 / np.sqrt(z1 * z2) * (
+            1 - ((4 * n1 ** 2 - 1) / (8 * z1)) + ((4 * n2 ** 2 - 1) / (8 * z2)) - ((4 * n1 ** 2 - 1) / (8 * z1)) * (
+            (4 * n2 ** 2 - 1) / (8 * z2)))
+    return IK
+
 
 def Cal_LC_OHL(High, Dist, r0):
     """
@@ -470,10 +508,6 @@ def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, const
     # （0) Intial constants
     ep0, mu0, ke, km = constants.ep0, constants.mu0, constants.ke, constants.km
 
-    # Nb所有支路的数量
-    Nb = wires.count()
-    # Nn所有节点的数量 
-    Nn = wires.count_distinct_points()
     # Nba所有空气中支路的数量
     Nba = wires.count_airWires()
     # Ngn所有地面支路的数量
@@ -482,6 +516,9 @@ def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, const
     Nna = wires.count_distinct_airPoints()
     # Nng所有地面节点的数量
     Nng = wires.count_distinct_gndPoints()
+
+    # Nn所有节点的数量, 默认空气中节点和地面节点无重复, 可以直接相加 
+    Nn = Nna + Nng
     # rb1 空气中的支路index集合(n*1)
     # 由于支路和节点矩阵，都是根据air_wires -> ground_wires -> a2g_wires -> short_wires -> tube_wires顺序进行拼接，因此可以通过支路数量进行数据切分，取出空气中和地面的线段的参数
     rb1 = np.arange(0, Nba)  # air bran

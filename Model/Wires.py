@@ -123,6 +123,91 @@ class TubeWire():
             corewire.display()
 
 
+    def get_coreWires_radii(self):
+        """
+        返回芯线集合的半径矩阵。
+
+        返回:
+        radii (numpy.narray, n*1): n条芯线的半径矩阵,每行为某一条芯线的半径
+        """
+        radii = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            radii[i] = wire.r
+        return radii
+
+    def get_coreWires_endNodeZ(self):
+        """
+        返回芯线末端z值矩阵。
+
+        返回:
+        end_node_z (numpy.narray, n*1): n条芯线的末端z值
+        """
+        end_node_z = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            end_node_z[i] = wire.end_node.z
+        return end_node_z
+
+    def get_coreWires_sig(self):
+        """
+        返回芯线电导率矩阵。
+
+        返回:
+        sig (numpy.narray, n*1): n条芯线的电导率
+        """
+        sig = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            sig[i] = wire.sig
+        return sig
+
+    def get_coreWires_mur(self):
+        """
+        返回芯线磁导率。
+
+        返回:
+        mur (numpy.narray, n*1): n条芯线的磁导率
+        """
+        mur = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            mur[i] = wire.mur
+        return mur
+
+    def get_coreWires_epr(self):
+        """
+        返回芯线相对介电常数。
+
+        返回:
+        epr (numpy.narray, n*1): n条芯线的相对介电常数
+        """
+        epr = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            epr[i] = wire.epr
+        return epr
+
+    def get_coreWires_innerOffset(self):
+        """
+        返回芯线偏置矩阵。
+
+        返回:
+        inner_offset (numpy.narray, n*1): n条芯线的偏置
+        """
+        inner_offset = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            inner_offset[i] = wire.inner_offset
+        return inner_offset
+
+    def get_coreWires_innerAngle(self):
+        """
+        返回芯线角度矩阵。
+
+        返回:
+        inner_angle (numpy.narray, n*1): n条芯线的角度
+        """
+        inner_angle = np.zeros((len(self.core_wires), 1))
+        for i, wire in enumerate(self.core_wires):
+            inner_angle[i] = wire.inner_angle
+        return inner_angle
+
+
 class OHLWire(Wire):
     def __init__(self, name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF, Cir_No, Phase, phase):
         """
@@ -144,7 +229,7 @@ class LumpWire(Wire):
     def __init__(self, name, start_node, end_node, offset, r, R, l, sig, mur, epr, VF):
         """
         初始化管状线段对象。
-        
+
         继承自Wire类,并添加以下参数:
         component(list):表示当前导线上的集中参数元件。
 

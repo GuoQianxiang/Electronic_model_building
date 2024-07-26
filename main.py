@@ -5,6 +5,9 @@ from Model.Ground import Ground
 from Model.Contant import Constant
 from Model.Tower import Tower
 from Utils.Math import calculate_inductance, calculate_potential, calculate_wires_inductance_potential_with_ground
+from Function.Calculators.Inductance import calculate_coreWires_inductance, calculate_sheath_inductance
+from Function.Calculators.Capacitance import calculate_coreWires_capacitance, calculate_sheath_capacitance
+from Function.Calculators.Impedance import calculate_coreWires_impedance, calculate_sheath_impedance, calculate_multual_impedance
 
 
 if __name__ == '__main__':
@@ -69,13 +72,13 @@ if __name__ == '__main__':
     wires.add_air_wire(wire2)
     wires.add_ground_wire(wire3)
     wires.add_ground_wire(wire4)
-    # wires.add_tube_wire(tube_wire1)
+    wires.add_tube_wire(tube_wire1)
 
 
     constants = Constant()
 
-    tower = Tower(None, wires, None, None, None, None,)
-    L, P = calculate_wires_inductance_potential_with_ground(tower.wires, ground, constants)
+    tower = Tower(None, wires, None, ground, None, None,)
+    L, P = calculate_wires_inductance_potential_with_ground(tower.wires, tower.ground, constants)
     # A矩阵
     print("------------------------------------------------")
     print("A matrix:")
@@ -107,3 +110,26 @@ if __name__ == '__main__':
     tower.update_potential_matrix(P)
     print(tower.potential_matrix)
     print("------------------------------------------------")
+
+    Lc = calculate_coreWires_inductance(tube_wire1.get_coreWires_radii(), tube_wire1.get_coreWires_innerOffset(), tube_wire1.get_coreWires_innerAngle(), tube_wire1.sheath.r)
+    print("Core wires inductance: ", Lc)
+
+    Cc = calculate_coreWires_capacitance(tube_wire1.outer_radius, tube_wire1.inner_radius, tube_wire1.get_coreWires_epr(), Lc)
+    print("Core wires capacitance: ", Cc)
+
+    Ls = calculate_sheath_inductance(tube_wire1.get_coreWires_endNodeZ(), tube_wire1.sheath.r, tube_wire1.outer_radius)
+    print("Sheath inductance: ", Ls)
+
+    Cs = calculate_sheath_capacitance(tube_wire1.get_coreWires_endNodeZ(), tube_wire1.sheath.epr, Ls)
+    print("Sheath capacitance: ", Cs)
+
+    Zc = calculate_coreWires_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.get_coreWires_innerOffset(), tube_wire1.get_coreWires_innerAngle(), tube_wire1.get_coreWires_mur(),
+                                       tube_wire1.get_coreWires_sig(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, 2e4)
+    print("Core wires impedance: ", Zc)
+
+    Zs = calculate_sheath_impedance(tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
+    print("Sheath impedance: ", Zs)
+
+    Zas, Zsa = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
+    print("Multual impedance (Zas): ", Zas)
+    print("Multual impedance (Zsa): ", Zsa)
