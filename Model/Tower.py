@@ -1,5 +1,6 @@
 import os
 import sys
+
 curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 
@@ -10,10 +11,12 @@ from Ground import Ground
 from Device import Device
 from Node import MeasurementNode
 import numpy as np
+from Utils.Math import expand_matrix
 
 
 class Tower:
-    def __init__(self, Info: Info, Wires: Wires, Lump, Ground: Ground, Device: Device, MeasurementNode: MeasurementNode):
+    def __init__(self, Info: Info, Wires: Wires, Lump, Ground: Ground, Device: Device,
+                 MeasurementNode: MeasurementNode):
         """
         初始化杆塔对象
 
@@ -43,12 +46,14 @@ class Tower:
         # 邻接矩阵
         self.incidence_matrix = np.zeros((self.wires.count(), self.wires.count_distinct_points()))
         # 阻抗矩阵
-        self.resistance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(), self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+        self.resistance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(),
+                                           self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
         # 电感矩阵
-        self.inductance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(), self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+        self.inductance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(),
+                                           self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
         # 电位矩阵
-        self.potential_matrix = np.zeros((self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints(), self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
-
+        self.potential_matrix = np.zeros((self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints(),
+                                          self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
 
     def initialize_incidence_matrix(self):
         """
@@ -76,7 +81,6 @@ class Tower:
                 self.incidence_matrix[wire_index][end_node_index] = 1
                 wire_index += 1
 
-
     def initialize_resistance_matrix(self):
         """
         initialize_resistance_matrix: calculate the resistance of every wire.
@@ -87,8 +91,7 @@ class Tower:
         #    np.diag(x) will use x to create a diagonal matrix: if x.shape == 1*n
         #    so, we should flatten the result of self.wires.get_resistance()* self.wires.get_lengths()
         #    then, np.diag(flattened(x))
-        self.resistance_matrix = np.diag((self.wires.get_resistance()* self.wires.get_lengths()).flatten())
-
+        self.resistance_matrix = np.diag((self.wires.get_resistance() * self.wires.get_lengths()).flatten())
 
     def initialize_inductance_matrix(self):
         """
@@ -97,14 +100,19 @@ class Tower:
         """
         self.inductance_matrix = np.diag((self.wires.get_inductance() * self.wires.get_lengths()).flatten())
 
-
     def initialize_potential_matrix(self):
         pass
-
 
     def update_inductance_matrix(self, L):
         self.inductance_matrix += L
 
-
     def update_potential_matrix(self, P):
         self.potential_matrix += P
+
+    def expand_inductance_matrix(self):
+        # 通过TubeWire的表皮与其他线段的互感，扩展复制代替为芯线与其他线段的互感，因为芯线和表皮实际上在一个位置
+        for i in range(len(self.wires.tube_wires)):
+            inner_num = self.wires.tube_wires[i].inner_num
+            sheath_index = i + len(self.wires.air_wires) - len(self.wires.tube_wires)
+            end_index = len(self.wires.air_wires) + len(self.wires.ground_wires)
+            self.inductance_matrix = expand_matrix(self.inductance_matrix, sheath_index, end_index, inner_num)

@@ -41,6 +41,36 @@ def Bessel_IK(z1, n1, z2, n2):
     return IK
 
 
+def expand_matrix(matrix, i, end, m):
+    """
+    从矩阵中取出第i行和第i列,并将其复制m次扩充成(n+m)*(n+m)的矩阵
+    
+    参数:
+    matrix (numpy.ndarray): 输入矩阵
+    i (int): 要取出的行和列索引
+    end (int): 要取出的行列的截止位置和赋值的截止位置(保证在循环过程中不会取出多余的部分)
+    m (int): 复制的次数
+    
+    返回:
+    expanded_matrix (numpy.ndarray): 扩充后的矩阵
+    """
+    n = matrix.shape[0]  # 获取原始矩阵的大小
+    
+    # 创建一个全零矩阵,大小为(n+m)*(n+m)
+    expanded_matrix = np.zeros((n+m, n+m), dtype=matrix.dtype)
+    
+    # 将原始矩阵复制到新矩阵的左上角
+    expanded_matrix[:n, :n] = matrix
+    
+    # 将第i行复制到新矩阵的最后m行
+    expanded_matrix[n:, :end] = np.tile(matrix[i, :end], (m, 1))
+    
+    # 将第i列复制到新矩阵的最后m列
+    expanded_matrix[:end, n:] = np.tile(matrix[:end, i][:, np.newaxis], (1, m))
+    
+    return expanded_matrix
+
+
 def Cal_LC_OHL(High, Dist, r0):
     """
     【函数功能】计算线段集的互感矩阵和互容矩阵
