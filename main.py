@@ -44,6 +44,7 @@ if __name__ == '__main__':
     ]) # To be fixed later(when fre is too large, we can not calculate normally)
     VF = {'odc': 10,
           'frq': frq}
+    f0 = 2e4
 
     # 根据节点连接成线段
     wire1 = Wire('Y01', node1, node2, 0, 0.005, 0, 0, 58000000, 1, 1, VF)
@@ -70,15 +71,22 @@ if __name__ == '__main__':
 
     wires.add_air_wire(wire1)
     wires.add_air_wire(wire2)
-    wires.add_air_wire(sheath_wire) # sheath wire is in the air, we need to calculate it in air part.
+    
     wires.add_ground_wire(wire3)
     wires.add_ground_wire(wire4)
     wires.add_tube_wire(tube_wire1)
 
 
     constants = Constant()
+    wires.display()
+    wires.split_long_wires_all(50)
+
+    for tubeWire in wires.tube_wires:
+        wires.add_air_wire(tubeWire.sheath) # sheath wire is in the air, we need to calculate it in air part.
+    wires.display()
 
     tower = Tower(None, wires, None, ground, None, None,)
+
     L, P = calculate_wires_inductance_potential_with_ground(tower.wires, tower.ground, constants)
     # A矩阵
     print("------------------------------------------------")
@@ -125,13 +133,13 @@ if __name__ == '__main__':
     print("Sheath capacitance: ", Cs)
 
     Zc = calculate_coreWires_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.get_coreWires_innerOffset(), tube_wire1.get_coreWires_innerAngle(), tube_wire1.get_coreWires_mur(),
-                                       tube_wire1.get_coreWires_sig(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, 2e4)
+                                       tube_wire1.get_coreWires_sig(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, f0)
     print("Core wires impedance: ", Zc)
 
-    Zs = calculate_sheath_impedance(tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
+    Zs = calculate_sheath_impedance(tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, f0)
     print("Sheath impedance: ", Zs)
 
-    Zcs, Zsc = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
+    Zcs, Zsc = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, f0)
     print("Multual impedance (Zcs): ", Zcs)
     print("Multual impedance (Zsc): ", Zsc)
 

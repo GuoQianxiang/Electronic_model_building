@@ -300,6 +300,7 @@ class TestWiresMethods(unittest.TestCase):
 
         # 测试tubeWire的切分，应当被分为三段相等的tubeWire
         self.assertEqual(wires.tube_wires[0].sheath.start_node, node9)
+        self.assertEqual(wires.tube_wires[0].sheath.end_node.z, 5)
         self.assertEqual(wires.tube_wires[2].sheath.end_node, node10)
         self.assertEqual(wires.tube_wires[0].core_wires[0].start_node, node11)
         self.assertEqual(wires.tube_wires[2].core_wires[0].end_node, node12)
@@ -328,10 +329,10 @@ class TestWiresMethods(unittest.TestCase):
         # 创建线段集合
         wires = Wires()
 
-        wires.add_a2g_wire(wire1)
+        wires.add_air_wire(wire1)
         wires.add_air_wire(wire2)
         wires.add_ground_wire(wire3)
-        wires.add_short_wire(wire4)
+        wires.add_ground_wire(wire4)
 
         start_points = wires.get_start_points()
         end_points = wires.get_end_points()
@@ -343,15 +344,15 @@ class TestWiresMethods(unittest.TestCase):
         points_num = wires.count_distinct_points()
         index = wires.get_bran_index()
 
-        expected_start_points = np.array([[0, -0.4, 10], [0, 0.1, 10], [0, 0, 10.5], [0, 0.6, 10]])
-        expected_end_points = np.array([[1000, -0.4, 10], [1000, 0.1, 10], [1000, 0, 10.5], [1000, 0.6, 10]])
+        expected_start_points = np.array([[0, 0, 10.5], [0, -0.4, 10], [0, 0.1, 10], [0, 0.6, 10]])
+        expected_end_points = np.array([[1000, 0, 10.5], [1000, -0.4, 10], [1000, 0.1, 10], [1000, 0.6, 10]])
         expected_radii = np.array([[0.005], [0.005], [0.005], [0.005]])
-        expected_offsets = np.array([[-0.4], [0.1], [0], [0.6]])
-        expected_heights = np.array([[10], [10], [10.5], [10]])
+        expected_offsets = np.array([[0], [-0.4], [0.1], [0.6]])
+        expected_heights = np.array([[10.5], [10], [10], [10]])
         expected_lengths = np.array([[1000], [1000], [1000], [1000]])
         expected_wires_num = 4
         expected_points_num = 8
-        expected_index = np.array([[2, 3, 4], [3, 5, 6], [1, 1, 2], [4, 7, 8]])
+        expected_index = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
 
         self.assertTrue(np.allclose(start_points, expected_start_points, rtol=1e-05))
         self.assertTrue(np.allclose(end_points, expected_end_points, rtol=1e-05))

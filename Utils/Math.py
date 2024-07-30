@@ -539,8 +539,7 @@ def calculate_wires_inductance_potential_with_ground(wires: Wires, ground, const
     end_points = wires.get_end_points()
     radii = wires.get_radii()
     lengths = wires.get_lengths()
-    At = wires.get_bran_index()[:, 1:3]
-    
+    At = wires.get_bran_index()
 
     # get x_consines, y_consines and z_consines
     x_consines, y_consines, z_consines = calculate_direction_cosines(start_points, end_points, lengths)

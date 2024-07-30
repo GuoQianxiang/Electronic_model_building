@@ -635,23 +635,39 @@ class Wires:
 
     def get_bran_index(self):
         """
-        返回按照下列格式所有线段（支路）的信息汇总列表：
-        【线段名最后的有效数字位，起始节点名最后的有效数字位，终止节点名最后的有效数字位】,
-        按照air、ground、a2g、short的顺序。
+        传入一个 wire 列表,返回一个 N*2 的 NumPy 矩阵,其中 N 为 wire 的数量,
+        第一列表示每条线的起始点编号,第二列表示终止点编号,编号从 1 开始,且每个点拥有全局唯一的编号。
+
+        参数:
+        wires (list): 包含 wire 对象的列表,每个 wire 对象需要有 start_node 和 end_node 属性。
 
         返回:
-        coordinates (list): 信息汇总列表,每个元素为(1, 1, 2)
+        wire_matrix (numpy.ndarray): N*2 的矩阵,其中 N 为 wire 的数量。
         """
-        coordinates = []
+        # 使用有序字典存储所有的节点及其编号
+        node_to_index = collections.OrderedDict()
+        next_index = 1
 
-        # 要求按照特定顺序进行拼接,因此分别进行for循环。
-        coordinates = np.zeros((len(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires), 3))
-        for i, wire in enumerate(self.air_wires + self.ground_wires + self.a2g_wires + self.short_wires):
-            wire_num = int(re.findall(r'\d+', wire.name)[-1])
-            start_num = int(re.findall(r'\d+', wire.start_node.name)[-1])
-            end_num = int(re.findall(r'\d+', wire.end_node.name)[-1])
-            coordinates[i] = [wire_num, start_num, end_num]
-        return coordinates
+        # 遍历所有的 wire,构建节点编号字典和wire矩阵
+        wire_matrix = []
+        for wire in self.air_wires + self.ground_wires:
+            start_node = wire.start_node
+            end_node = wire.end_node
+
+            # 如果起始节点不在字典中,添加到字典并分配编号
+            if start_node not in node_to_index:
+                node_to_index[start_node] = next_index
+                next_index += 1
+
+            # 如果终止节点不在字典中,添加到字典并分配编号
+            if end_node not in node_to_index:
+                node_to_index[end_node] = next_index
+                next_index += 1
+
+            # 将当前 wire 的起始点和终止点编号加入矩阵
+            wire_matrix.append([node_to_index[start_node], node_to_index[end_node]])
+
+        return np.array(wire_matrix)
     
 
     def split_long_wires(self, wires, max_length):
@@ -714,21 +730,18 @@ class Wires:
                 dz = (sheath_end_node.z - sheath_start_node.z) / num_segments
 
                 # 切分 sheath
+                sheath_start_point = sheath_start_node
+                sheath_end_point = sheath_end_node
                 for i in range(num_segments):
-                    start_point = sheath_start_node
-                    end_point = sheath_end_node
-
+                    middle_node = Node(name=f"{sheath.name}_MiddleNode_{i+1}",
+                                       x = sheath_start_point.x + (i+1)*dx,
+                                       y = sheath_start_point.y + (i+1)*dy,
+                                       z = sheath_start_point.z + (i+1)*dz)
 
                     new_sheath = Wire(
                         name=f"{sheath.name}_Splited_{i+1}",
-                        start_node=start_point if i == 0 else Node(name=f"{sheath.name}_MiddleNode_{i}",
-                                                                   x = start_point.x + i*dx,
-                                                                   y = start_point.y + i*dy,
-                                                                   z = start_point.z + i*dz),
-                        end_node=end_point if i == num_segments-1 else Node(name=f"{sheath.name}_MiddleNode_{i+1}",
-                                                                            x = start_point.x + (i+1)*dx,
-                                                                            y = start_point.y + (i+1)*dy,
-                                                                            z = start_point.z + (i+1)*dz),
+                        start_node=sheath_start_point,
+                        end_node=sheath_end_point if i == num_segments-1 else middle_node,
                         offset=sheath.offset,
                         r=sheath.r,
                         R=sheath.R,
@@ -738,6 +751,7 @@ class Wires:
                         epr=sheath.epr,
                         VF=sheath.VF
                     )
+                    sheath_start_point = middle_node
 
                     # 切分 core_wires
                     new_core_wires = []

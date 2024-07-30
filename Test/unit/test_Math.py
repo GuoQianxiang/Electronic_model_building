@@ -79,10 +79,10 @@ class TestMath(unittest.TestCase):
         # 创建线段集合
         wires = Wires()
 
-        wires.add_a2g_wire(wire1)
+        wires.add_air_wire(wire1)
         wires.add_air_wire(wire2)
         wires.add_ground_wire(wire3)
-        wires.add_short_wire(wire4)
+        wires.add_ground_wire(wire4)
 
 
 
@@ -94,14 +94,13 @@ class TestMath(unittest.TestCase):
 
         L = INT_SLAN_2D(start_points, end_points, radii, start_points, end_points, radii, 2, 2)
   
-        expected_inductance = np.array([[23798.45113262, 14589.09915526, 14094.68345806, 13203.80441899],  
-                                        [14589.09915526, 23798.45113262, 14549.89824057, 14589.09915526],  
-                                        [14094.68345806, 14549.89824057, 23798.45113262, 13697.6629857 ],  
-                                        [13203.80441899, 14589.09915526, 13697.6629857,  23798.45113262]])
+        expected_inductance = np.array([[23798.45113262, 14094.68345806, 14549.89824057, 13697.6629857],
+                                        [14094.68345806, 23798.45113262, 14589.09915526, 13203.80441899],
+                                        [14549.89824057, 14589.09915526, 23798.45113262, 14589.09915526],
+                                        [13697.6629857, 13203.80441899, 14589.09915526, 23798.45113262]])
 
 
-        index = wires.get_bran_index()
-        At = index[:, 1:3]
+        At = wires.get_bran_index()
 
         P = calculate_potential(start_points, end_points, lengths, radii, start_points, end_points, lengths, radii, At, points_num)
 
@@ -113,7 +112,6 @@ class TestMath(unittest.TestCase):
                                        [0.00277055, 0.02632925, 0.00277059, 0.02640761, 0.00277257, 0.04482433, 0.00277059, 0.02640761],  
                                        [0.02462586, 0.00276947, 0.02363902, 0.00276859, 0.02640761, 0.00277059, 0.04482433, 0.00277257],  
                                        [0.00276947, 0.02462586, 0.00276859, 0.02363902, 0.00277059, 0.02640761, 0.00277257, 0.04482433]])
-        
         self.assertTrue(np.allclose(L, expected_inductance))
         self.assertTrue(np.allclose(P, expected_potential))
 
