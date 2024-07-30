@@ -9,6 +9,7 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 from Node import Node
 # from Lump import Component
+import collections
 
 class Wire:
     def __init__(self, name: str, start_node: Node, end_node: Node, offset: float, r: float, R: float, L: float, sig: float, mur: float, epr: float, VF):
@@ -312,8 +313,11 @@ class Wires:
         """
         返回线段总数。
         """
-        # 此处认为管状线段为一条线段（未统计内部包含的线段）
-        return len(self.air_wires) + len(self.ground_wires) + len(self.tube_wires) + len(self.a2g_wires) + len(self.short_wires)
+        # 由于业务需要，tubeWire的表皮默认存在于air_wire中，此处num_tubeWires只统计内部芯线的数量
+        num_tubeWires = 0
+        for i in range(len(self.tube_wires)):
+            num_tubeWires += self.tube_wires[i].inner_num
+        return len(self.air_wires) + len(self.ground_wires) + num_tubeWires + len(self.a2g_wires) + len(self.short_wires)
 
 
     def get_node_names(self):
@@ -454,22 +458,23 @@ class Wires:
         wires (Wires): Wires 对象
 
         返回:
-        all_nodes(set): 所有不重复点的集合
+        all_nodes(OrderedDict): 所有不重复点的有序集合
         """
         # 获取所有不重复的节点(包含管状线段内部线段的起始点和终止点)
-        all_nodes = set()
+        all_nodes = collections.OrderedDict()
         for wire_list in [self.air_wires, self.ground_wires, self.a2g_wires, self.short_wires]:
             for wire in wire_list:
-                all_nodes.add(wire.start_node)
-                all_nodes.add(wire.end_node)
-        
+                all_nodes[wire.start_node] = True
+                all_nodes[wire.end_node] = True
+
         for tubewire in self.tube_wires:
-            all_nodes.add(tubewire.sheath.start_node)
-            all_nodes.add(tubewire.sheath.end_node)
+            all_nodes[tubewire.sheath.start_node] = True
+            all_nodes[tubewire.sheath.end_node] = True
             for core_wire in tubewire.core_wires:
-                all_nodes.add(core_wire.start_node)
-                all_nodes.add(core_wire.end_node)
-        return all_nodes
+                all_nodes[core_wire.start_node] = True
+                all_nodes[core_wire.end_node] = True
+
+        return list(all_nodes)
 
 
     def count_a2gWires(self):

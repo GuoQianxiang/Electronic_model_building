@@ -41,7 +41,7 @@ class Tower:
         self.bransList = Wires.get_bran_coordinates()
         # 以下是参数矩阵，是Tower建模最终输出的参数
         # 邻接矩阵
-        self.incidence_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(), self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+        self.incidence_matrix = np.zeros((self.wires.count(), self.wires.count_distinct_points()))
         # 阻抗矩阵
         self.resistance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(), self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
         # 电感矩阵
@@ -60,11 +60,18 @@ class Tower:
         """
         wire_index = 0
         all_nodes = self.wires.get_all_nodes()
-        node_to_index = {node: node.id-1 for i, node in enumerate(all_nodes)}
+        node_to_index = {node: i for i, node in enumerate(all_nodes)}
         for wire_list in [self.wires.air_wires, self.wires.ground_wires]:
             for wire in wire_list:
                 start_node_index = node_to_index[wire.start_node]
                 end_node_index = node_to_index[wire.end_node]
+                self.incidence_matrix[wire_index][start_node_index] = -1
+                self.incidence_matrix[wire_index][end_node_index] = 1
+                wire_index += 1
+        for tube_wire in self.wires.tube_wires:
+            for core_wire in tube_wire.core_wires:
+                start_node_index = node_to_index[core_wire.start_node]
+                end_node_index = node_to_index[core_wire.end_node]
                 self.incidence_matrix[wire_index][start_node_index] = -1
                 self.incidence_matrix[wire_index][end_node_index] = 1
                 wire_index += 1

@@ -129,13 +129,14 @@ def calculate_multual_impedance(core_wires_r, sheath_mur, sheath_sig, sheath_inn
     Frq(numpy.ndarray,1*Nf):Nf个频率组成的频率矩阵
 
     【出参】
-    Zas(numpy.ndarray:n*1*Nf): Nf个频率下的互阻抗矩阵, n为芯线数量
-    Zsa(numpy.ndarray:1*n*Nf): Nf个频率下的互阻抗矩阵, n为芯线数量
+    Zcs(numpy.ndarray:n*1*Nf): Nf个频率下的芯线和表皮之间的互阻抗矩阵, n为芯线数量
+    Zsc(numpy.ndarray:1*n*Nf): Nf个频率下的表皮和芯线之间的互阻抗矩阵, n为芯线数量
     """
     mu0 = 4 * np.pi * 1e-7
     ep0 = 8.854187818e-12
     Besl_Max = 200
     frq = np.array([Frq]).reshape(-1)
+    # Npha 表示芯线数量
     Npha = core_wires_r.shape[0]
     Mu_s = mu0 * sheath_mur
     Nf = frq.size
@@ -155,13 +156,13 @@ def calculate_multual_impedance(core_wires_r, sheath_mur, sheath_sig, sheath_inn
     Itmp2 = besseli(1, Rsa[low]) * besselk(1, Rsb[low]) - besseli(1, Rsb[low]) * besselk(1, Rsa[low])
     Z0[low] = ks[low] / Itmp2
 
-    Zas = np.zeros((Npha, 1, Nf), dtype='complex')
-    Zsa = np.zeros((1, Npha, Nf), dtype='complex')
+    Zcs = np.zeros((Npha, 1, Nf), dtype='complex')
+    Zsc = np.zeros((1, Npha, Nf), dtype='complex')
     for ik in range(Nf):
-        Zas[:, 0, ik] = Z0[ik]
-        Zsa[0, :, ik] = Z0[ik]
+        Zcs[:, 0, ik] = Z0[ik]
+        Zsc[0, :, ik] = Z0[ik]
 
-    return Zas, Zsa
+    return Zcs, Zsc
 
 
 def calculate_ground_impedance(ground_mur, ground_epr, ground_sig, end_node_z, sheath_outer_radius, Dist, Frq):

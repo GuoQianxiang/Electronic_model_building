@@ -37,11 +37,11 @@ if __name__ == '__main__':
         np.arange(100, 1000, 100),
         np.arange(1000, 10000, 1000),
         np.arange(10000, 100000, 10000),
-        np.arange(100000, 1000000, 100000),
-        np.arange(1000000, 10000000, 1000000),
-        np.arange(10000000, 100000000, 10000000),
-        np.arange(100000000, 1000000000, 100000000)
-    ])
+        # np.arange(100000, 1000000, 100000),
+        # np.arange(1000000, 10000000, 1000000),
+        # np.arange(10000000, 100000000, 10000000),
+        # np.arange(100000000, 1000000000, 100000000)
+    ]) # To be fixed later(when fre is too large, we can not calculate normally)
     VF = {'odc': 10,
           'frq': frq}
 
@@ -70,6 +70,7 @@ if __name__ == '__main__':
 
     wires.add_air_wire(wire1)
     wires.add_air_wire(wire2)
+    wires.add_air_wire(sheath_wire) # sheath wire is in the air, we need to calculate it in air part.
     wires.add_ground_wire(wire3)
     wires.add_ground_wire(wire4)
     wires.add_tube_wire(tube_wire1)
@@ -130,6 +131,21 @@ if __name__ == '__main__':
     Zs = calculate_sheath_impedance(tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
     print("Sheath impedance: ", Zs)
 
-    Zas, Zsa = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
-    print("Multual impedance (Zas): ", Zas)
-    print("Multual impedance (Zsa): ", Zsa)
+    Zcs, Zsc = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, 2e4)
+    print("Multual impedance (Zcs): ", Zcs)
+    print("Multual impedance (Zsc): ", Zsc)
+
+
+    print("----------------------------------------------------------------")
+    
+    Zcf = calculate_coreWires_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.get_coreWires_innerOffset(), tube_wire1.get_coreWires_innerAngle(), tube_wire1.get_coreWires_mur(),
+                                       tube_wire1.get_coreWires_sig(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, VF["frq"])
+    print("Frequency-dependent coreWires impedance (Zcf): ", Zcf)
+
+    Zsf = calculate_sheath_impedance(tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, VF["frq"])
+    print("Frequency-dependent sheath impedance (Zsf): ", Zsf)
+
+    Zcsf, Zscf = calculate_multual_impedance(tube_wire1.get_coreWires_radii(), tube_wire1.sheath.mur, tube_wire1.sheath.sig, tube_wire1.inner_radius, tube_wire1.sheath.r, VF["frq"])
+    print("Frequency-dependent multual impedance(Zcsf): ", Zcsf)
+    print("Frequency-dependent multual impedance(Zscf): ", Zscf)
+    print("----------------------------------------------------------------")
