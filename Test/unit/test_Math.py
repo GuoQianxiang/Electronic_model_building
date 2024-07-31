@@ -3,7 +3,7 @@ import sys
 sys.path.append('../..')
 import unittest
 import numpy as np
-from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential, calculate_direction_cosines
+from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential, calculate_direction_cosines, copy_and_expand_matrix
 from Model.Wires import Wire, Wires
 from Model.Node import Node
 from Model.Ground import Ground
@@ -114,6 +114,25 @@ class TestMath(unittest.TestCase):
                                        [0.00276947, 0.02462586, 0.00276859, 0.02363902, 0.00277059, 0.02640761, 0.00277257, 0.04482433]])
         self.assertTrue(np.allclose(L, expected_inductance))
         self.assertTrue(np.allclose(P, expected_potential))
+
+    
+    def test_copy_and_expand_matrix(self):
+        # 示例用法
+        original_matrix = np.array([[1, 2, 3],
+                                    [5, 6, 7],
+                                    [8, 9, 10]])
+
+        expanded_matrix = copy_and_expand_matrix(original_matrix, 3)
+        expected_matrix = np.array([[0, 0, 0, 2, 2, 2, 3, 3, 3],
+                                    [0, 0, 0, 2, 2, 2, 3, 3, 3],
+                                    [0, 0, 0, 2, 2, 2, 3, 3, 3],
+                                    [5, 5, 5, 0, 0, 0, 7, 7, 7],
+                                    [5, 5, 5, 0, 0, 0, 7, 7, 7],
+                                    [5, 5, 5, 0, 0, 0, 7, 7, 7],
+                                    [8, 8, 8, 9, 9, 9, 0, 0, 0],
+                                    [8, 8, 8, 9, 9, 9, 0, 0, 0],
+                                    [8, 8, 8, 9, 9, 9, 0, 0, 0]])
+        self.assertTrue(np.allclose(expanded_matrix, expected_matrix))
 
 
 if __name__ == '__main__':

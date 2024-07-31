@@ -11,7 +11,8 @@ from Ground import Ground
 from Device import Device
 from Node import MeasurementNode
 import numpy as np
-from Utils.Math import expand_matrix
+from scipy.linalg import block_diag
+from Utils.Math import expand_matrix, copy_and_expand_matrix, update_matrix
 
 
 class Tower:
@@ -103,10 +104,10 @@ class Tower:
     def initialize_potential_matrix(self):
         pass
 
-    def update_inductance_matrix(self, L):
+    def add_inductance_matrix(self, L):
         self.inductance_matrix += L
 
-    def update_potential_matrix(self, P):
+    def add_potential_matrix(self, P):
         self.potential_matrix += P
 
     def expand_inductance_matrix(self):
@@ -116,3 +117,50 @@ class Tower:
             sheath_index = i + len(self.wires.air_wires) - len(self.wires.tube_wires)
             end_index = len(self.wires.air_wires) + len(self.wires.ground_wires)
             self.inductance_matrix = expand_matrix(self.inductance_matrix, sheath_index, end_index, inner_num)
+
+    def update_inductance_matrix_by_coreWires(self):
+        # 获取内部芯线的数量
+        inner_num = self.wires.tube_wires[0].inner_num
+        # 获取矩阵中表皮开始的索引和结束的索引
+        sheath_start_index = len(self.wires.air_wires) - len(self.wires.tube_wires)
+        sheath_end_index = len(self.wires.air_wires)
+        # 获取空气和地面支路的结束位置
+        end_index = len(self.wires.air_wires) + len(self.wires.ground_wires)
+        # 单独获取表皮的电感矩阵
+        sheath_inductance_matrix = self.inductance_matrix[sheath_start_index:sheath_end_index,
+                                   sheath_start_index:sheath_end_index]
+        self.inductance_matrix[end_index:, end_index:] = copy_and_expand_matrix(sheath_inductance_matrix, inner_num)
+        return sheath_inductance_matrix
+
+    def update_inductance_matrix_by_tubeWires(self, sheath_inductance_matrix, Lin, Lx):
+        # 获取第一个管状线段的表皮和芯线在矩阵中的索引
+        index = self.wires.get_tubeWires_start_index()
+        # 获取索引增量，保证下面循环过程中，index+increment就是下一条管状线段的表皮和芯线的索引
+        increment = self.wires.get_tubeWires_index_increment()
+
+        L0 = Lin.copy()
+        L0[0, 0] = 0
+        for i in range(len(self.wires.tube_wires)):
+            Lss = Lin[0, 0] + sheath_inductance_matrix[i, i]
+            # L0+Lx+Lss的最终结果 更新到表皮和芯线的自感和互感位置上去
+            self.inductance_matrix = update_matrix(self.inductance_matrix, index, L0 + Lx + Lss)
+            index = [x + y for x, y in zip(index, increment)] # index+increment就是下一条管状线段的表皮和芯线的索引
+
+        return L0
+    
+    def expand_resistance_matrix(self):
+        # 扩展电阻矩阵
+        coreWires_resistance_matrix = np.zeros((len(self.wires.tube_wires) * (self.wires.tube_wires[0].inner_num), len(self.wires.tube_wires) * (self.wires.tube_wires[0].inner_num)))
+        self.resistance_matrix = block_diag(self.resistance_matrix, coreWires_resistance_matrix) # 增加芯线的电阻矩阵，此处只做扩充，不做芯线本身的电阻填充
+
+    def update_resistance_matrix_by_tubeWires(self, Rin, Rx):
+        # 与电感矩阵更新逻辑相同
+        index = self.wires.get_tubeWires_start_index()
+        increment = self.wires.get_tubeWires_index_increment()
+
+        R0 = Rin.copy()
+        R0[0, 0] = 0
+        Rss = Rin[0, 0] # 此处与电感矩阵更新过程不同，此处不需要表皮的单位电阻
+        for i in range(len(self.wires.tube_wires)):
+            self.resistance_matrix = update_matrix(self.resistance_matrix, index, R0 + Rx + Rss)
+            index = [x + y for x, y in zip(index, increment)]

@@ -670,6 +670,21 @@ class Wires:
         return np.array(wire_matrix)
     
 
+    def get_tubeWires_start_index(self):
+        index = [len(self.air_wires) - len(self.tube_wires)]
+        for i in range(len(self.air_wires) + len(self.ground_wires) , len(self.air_wires) + len(self.ground_wires) + self.tube_wires[0].inner_num):
+            index.append(i)
+
+        return index
+    
+    def get_tubeWires_index_increment(self):
+        increment = [1]
+        inner_num = self.tube_wires[0].inner_num
+        for i in range(inner_num):
+            increment.append(inner_num)
+        
+        return increment
+
     def split_long_wires(self, wires, max_length):
         new_wires = []
         # 对所有的线段做长度检查

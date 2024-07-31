@@ -71,6 +71,9 @@ def calculate_coreWires_impedance(core_wires_r, core_wires_offset, core_wires_an
             Ktmp[:, :, jk] = Kn * Km[ik, jk]
         Kt += Ktmp
     Zc += Kt
+    # process the data, because the Z matrix is 3-dimensional matrix, but when fre is a float, we need Z is a 2-dimensional array
+    if isinstance(Frq, float):
+        Zc = np.squeeze(Zc)
     return Zc
 
 
@@ -113,7 +116,9 @@ def calculate_sheath_impedance(sheath_mur, sheath_sig, sheath_inner_radius, shea
     Zs = np.zeros((Ns, 1, Nf), dtype='complex')
     for ik in range(Nf):
         Zs[:, 0, ik] = Zs_diag[ik]
-
+    # process the data, because the Z matrix is 3-dimensional matrix, but when fre is a float, we need Z is a 2-dimensional array
+    if isinstance(Frq, float):
+        Zs = np.squeeze(Zs)
     return Zs
 
 
@@ -161,6 +166,10 @@ def calculate_multual_impedance(core_wires_r, sheath_mur, sheath_sig, sheath_inn
     for ik in range(Nf):
         Zcs[:, 0, ik] = Z0[ik]
         Zsc[0, :, ik] = Z0[ik]
+    # process the data, because the Z matrix is 3-dimensional matrix, but when fre is a float, we need Z is a 2-dimensional array
+    if isinstance(Frq, float):
+        Zsc = np.squeeze(Zsc) # Zsc should be 1*n
+        Zcs = np.squeeze(Zcs).reshape(-1, 1) # Zcs should be n*1
 
     return Zcs, Zsc
 

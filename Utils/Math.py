@@ -71,6 +71,64 @@ def expand_matrix(matrix, i, end, m):
     return expanded_matrix
 
 
+def copy_and_expand_matrix(original_matrix, m):
+    """
+    将一个n*n的矩阵扩展为一个mn*mn的矩阵,其中主对角线上的m*m矩阵块为0,
+    其余的m*m矩阵块按照原先n*n的矩阵对应位置的数值复制填充。
+
+    参数:
+    original_matrix (numpy.ndarray): 输入n*n的矩阵
+    m (int): 每个子矩阵块的大小
+
+    返回:
+    expanded_matrix (numpy.ndarray): 扩展后的mn*mn矩阵
+    """
+    n = original_matrix.shape[0]  # 原始矩阵的大小
+    expanded_size = n * m  # 扩展后矩阵的大小
+
+    # 创建一个全零的扩展矩阵
+    expanded_matrix = np.zeros((expanded_size, expanded_size), dtype=original_matrix.dtype)
+
+    # 遍历原始矩阵的每个元素
+    for i in range(n):
+        for j in range(n):
+            # 计算子矩阵块的起始位置
+            row_start = i * m
+            col_start = j * m
+
+            # 将当前元素复制为m*m的子矩阵块
+            expanded_matrix[row_start:row_start+m, col_start:col_start+m] = np.full((m, m), original_matrix[i, j])
+
+            # 将主对角线上的m*m矩阵块设置为0
+            if i == j:
+                expanded_matrix[row_start:row_start+m, col_start:col_start+m] = 0
+
+    return expanded_matrix
+
+
+def update_matrix(matrix, indices, submatrix):
+    """
+    将 n*n 的 NumPy 矩阵中,指定的行列索引对应的区域,替换为 m*m 的子矩阵。
+
+    参数:
+    matrix (numpy.ndarray): 输入的 n*n 矩阵
+    indices (list): 长度为 m*m 的列表,表示要替换的行列索引
+    submatrix (numpy.ndarray): 要替换的 m*m 子矩阵
+
+    返回:
+    updated_matrix (numpy.ndarray): 更新后的 n*n 矩阵
+    """
+    n = matrix.shape[0]
+
+    updated_matrix = matrix.copy()  # 创建输入矩阵的副本
+    i = 0
+    for index in indices:
+        updated_matrix[index, indices] = submatrix[i, :]
+        i += 1
+
+    return updated_matrix
+
+
 def Cal_LC_OHL(High, Dist, r0):
     """
     【函数功能】计算线段集的互感矩阵和互容矩阵
