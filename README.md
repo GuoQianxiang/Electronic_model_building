@@ -51,7 +51,7 @@ We state all of the main classes in this directory.
 - OHL.py : ...
 - Lightning.py : we created a Lightning class and a stroke class in this file. Lightning class contains much stroke object which can consist of the whole Lightning object.
 - Lump.py : ...
-## inferior
+### inferior
 We state all of inferior classes in this directory which will not be used directly in Driver directory but will be used by main classes.
 - Wires.py
 - Node.py
