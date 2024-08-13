@@ -3,7 +3,7 @@ import sys
 sys.path.append('../..')
 import unittest
 import numpy as np
-from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential, calculate_direction_cosines, copy_and_expand_matrix, update_matrix
+from Utils.Math import calculate_distances, INT_SLAN_2D, calculate_potential, calculate_direction_cosines, copy_and_expand_matrix, update_matrix, update_and_sum_matrix
 from Model.Wires import Wire, Wires
 from Model.Node import Node
 from Model.Ground import Ground
@@ -156,6 +156,24 @@ class TestMath(unittest.TestCase):
                                     [13, 14, 15, 16]])
 
         self.assertTrue(np.allclose(updated_matrix, expected_matrix))
+    
+
+    def test_update_and_sum_matrix(self):
+        # 创建一个 5x5 的示例矩阵
+        matrix = np.array([[0, 0, 0, 0, 0],
+                           [0, 1, 1, 1, 1],
+                           [0, 1, 1, 1, 1],
+                           [0, 1, 1, 1, 1],
+                           [0, 1, 1, 1, 1]])
+
+        # 执行矩阵操作
+        result = update_and_sum_matrix(matrix)
+        expected_result = np.array([[16, -4, -4, -4, -4],
+                                    [-4, 1, 1, 1, 1],
+                                    [-4, 1, 1, 1, 1],
+                                    [-4, 1, 1, 1, 1],
+                                    [-4, 1, 1, 1, 1]])
+        self.assertTrue(np.allclose(result, expected_result))
 
 if __name__ == '__main__':
     unittest.main()

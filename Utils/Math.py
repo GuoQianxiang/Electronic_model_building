@@ -108,11 +108,11 @@ def copy_and_expand_matrix(original_matrix, m):
 
 def update_matrix(matrix, indices, submatrix):
     """
-    将 n*n 的 NumPy 矩阵中,指定的行列索引对应的区域,替换为 m*m 的子矩阵。
+    将 n*n 的 NumPy 矩阵中,指定的m行m列的索引对应的区域,替换为 m*m 的子矩阵相应的数据。
 
     参数:
     matrix (numpy.ndarray): 输入的 n*n 矩阵
-    indices (list): 长度为 m*m 的列表,表示要替换的行列索引
+    indices (list): 长度为 m 的列表,表示要替换的行列索引
     submatrix (numpy.ndarray): 要替换的 m*m 子矩阵
 
     返回:
@@ -127,6 +127,30 @@ def update_matrix(matrix, indices, submatrix):
         i += 1
 
     return updated_matrix
+
+
+def update_and_sum_matrix(matrix):
+    """
+    对给定的 n*n 方阵执行矩阵操作:
+    1. 对第二行到末尾行,将其第二个元素到末尾的元素相加的相反数作为当前行的第一个元素的值
+    2. 对第二列到末尾列,将其第二个元素到末尾的元素相加的相反数作为当前行的第一个元素的值
+    3. 对第一行和第一列进行同样的加和操作, 将和的-0.5倍作为左上角元素的值
+    """
+    n = matrix.shape[0]
+    new_matrix = matrix.copy()
+
+    # 处理第二行到最后一行
+    for i in range(1, n):
+        new_matrix[i, 0] = -np.sum(new_matrix[i, 1:])
+
+    # 处理第二列到最后一列
+    for j in range(1, n):
+        new_matrix[0, j] = -np.sum(new_matrix[1:, j])
+
+    # 处理第一行和第一列
+    new_matrix[0, 0] = -0.5* (np.sum(new_matrix[0, 1:]) + np.sum(new_matrix[1:, 0]))
+
+    return new_matrix
 
 
 def Cal_LC_OHL(High, Dist, r0):

@@ -5,12 +5,10 @@ from Model.Wires import Wire, Wires, CoreWire, TubeWire
 from Model.Ground import Ground
 from Model.Contant import Constant
 from Model.Tower import Tower
-from Utils.Math import calculate_inductance, calculate_potential, calculate_wires_inductance_potential_with_ground, \
-    expand_matrix
+from Utils.Math import calculate_wires_inductance_potential_with_ground
 from Function.Calculators.Inductance import calculate_coreWires_inductance, calculate_sheath_inductance
 from Function.Calculators.Capacitance import calculate_coreWires_capacitance, calculate_sheath_capacitance
-from Function.Calculators.Impedance import calculate_coreWires_impedance, calculate_sheath_impedance, \
-    calculate_multual_impedance
+from Function.Calculators.Impedance import calculate_coreWires_impedance, calculate_sheath_impedance, calculate_multual_impedance
 
 if __name__ == '__main__':
     # 初始化节点数据
@@ -51,7 +49,7 @@ if __name__ == '__main__':
 
     # 根据节点连接成线段
     wire1 = Wire('Y01', node1, node2, 0, 0.005, 1, 0, 58000000, 1, 1, VF)
-    wire2 = Wire('Y02', node2, node3, 0, 0.005, 1, 0, 58000000, 1, 1, VF)
+    wire2 = Wire('Y02', node2, node9, 0, 0.005, 1, 0, 58000000, 1, 1, VF)
     # 注意，空气和地面的线段不能相连、连接部分为a2g线段，后续添加一并处理
     wire3 = Wire('Y03', node4, node5, 0, 0.005, 1, 0, 58000000, 1, 1, VF)
     wire4 = Wire('Y04', node5, node6, 0, 0.005, 1, 0, 58000000, 1, 1, VF)
@@ -158,6 +156,7 @@ if __name__ == '__main__':
     # L矩阵
     print("------------------------------------------------")
     print("L matrix:")
+    print(tower.inductance_matrix)
     tower.initialize_inductance_matrix()
     print(tower.inductance_matrix)
     tower.add_inductance_matrix(L)
@@ -173,6 +172,7 @@ if __name__ == '__main__':
     # R矩阵
     print("------------------------------------------------")
     print("R matrix:")
+    print(tower.resistance_matrix)
     tower.initialize_resistance_matrix()
     print(tower.resistance_matrix)
     tower.expand_resistance_matrix()
@@ -190,3 +190,12 @@ if __name__ == '__main__':
     print(tower.potential_matrix)
     print("------------------------------------------------")
 
+    # C矩阵
+    print("------------------------------------------------")
+    print("C matrix:")
+    print(tower.capacitance_matrix)
+    tower.initialize_capacitance_matrix()
+    print(tower.capacitance_matrix)
+    tower.update_capacitance_matrix_by_tubeWires(Cin)
+    print(tower.capacitance_matrix)
+    print("------------------------------------------------")
