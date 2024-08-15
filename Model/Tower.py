@@ -5,29 +5,29 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 
 from Info import Info
-from Wires import Wires
-# from Lump import Circuit
+from Wires import Wires, TubeWire
 from Ground import Ground
 from Device import Device
 from Node import MeasurementNode
 import numpy as np
 from scipy.linalg import block_diag
-from Utils.Math import expand_matrix, copy_and_expand_matrix, update_matrix, update_and_sum_matrix
+from Utils.Matrix import expand_matrix, copy_and_expand_matrix, update_matrix, update_and_sum_matrix
 
 
 class Tower:
-    def __init__(self, Info: Info, Wires: Wires, Lump, Ground: Ground, Device: Device,
+    def __init__(self, Info: Info, Wires: Wires, tubeWire: TubeWire, Lump, Ground: Ground, Device: Device,
                  MeasurementNode: MeasurementNode):
         """
         初始化杆塔对象
 
         参数:
-        Info (TowerInfo): 杆塔自描述信息对象
-        Wires (Wires): 杆塔线段对象集合
-        Lump (Circuit): 集中参数对象集合
-        Ground (Ground): 杆塔地线对象集合
-        Device (Device): 杆塔设备对象集合
-        MeasurementNode (MeasurementNode): 杆塔测量节点对象集合
+        info (TowerInfo): 杆塔自描述信息对象
+        wires (Wires): 杆塔线段对象集合
+        tubeWire (TubeWire): 管状线段(杆塔中的管状线段唯一, 此处留存初始未切分的管状线段, 方便后续使用, 切分后的多个管状线存储于wires中)
+        lump (Circuit): 集中参数对象集合
+        ground (Ground): 杆塔地线对象集合
+        device (Device): 杆塔设备对象集合
+        measurementNode (MeasurementNode): 杆塔测量节点对象集合
 
         无需传入的参数：
         nodesList (list): 杆塔节点名字列表
@@ -40,6 +40,7 @@ class Tower:
         """
         self.info = Info
         self.wires = Wires
+        self.tubeWire = tubeWire
         self.lump = Lump
         self.ground = Ground
         self.device = Device
