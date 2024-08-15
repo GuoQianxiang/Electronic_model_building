@@ -1,0 +1,801 @@
+{
+  "user_id": "01",
+  "case_id": "1",
+  "cable": {
+    "id": "1",
+    "type": 1,
+    "voltage": "10kV",
+    "T_head_id": "005",
+    "T_tail_id": "007",
+    "connection": {
+      "Tower1": [
+        "X01",
+        "X02",
+        "X03",
+        "X04"
+      ],
+      "Tower5": [
+        "Z1",
+        "Z2",
+        "Z3",
+        "Z4"
+      ]
+    },
+    "line": {
+      "position": [
+        "x1",
+        "y2",
+        "z1",
+        "x2",
+        "y2",
+        "z2"
+      ],
+      "rad": [
+        "rc",
+        "rd",
+        "ra1",
+        "rs"
+      ],
+      "mat": [
+        "sigc",
+        "siga",
+        "murc",
+        "mura",
+        "epri"
+      ]
+    }
+  },
+  "Tower": {
+    "info": {
+      "id": "1",
+      "type": "10",
+      "Vclass": "10kV",
+      "Theta": 0,
+      "position": [
+        1,
+        0,
+        0
+      ],
+      "theta": 0,
+      "mode_con": 0,
+      "mode_gnd": 0,
+      "pole_height": 10.5,
+      "pole_head": "x01"
+    },
+    "device": {
+      "insulator": 1,
+      "surge_arrester": 1,
+      "transformer": 0,
+      "grid": 0,
+      "inverter": 0,
+      "tube": 0,
+      "invf": null,
+      "mtck": null,
+      "oth1": null,
+      "peec1": null,
+      "peec2": null,
+      "peec3": null,
+      "peec0": null
+    },
+    "ground": {
+      "glb": 1,
+      "sig": 1e-3,
+      "mur": 1,
+      "epr": 4,
+      "gnd_model": "Lossy",
+      "ionisation_intensity": "weak",
+      "ionisation_model": "isolational"
+    },
+    "connection": {
+    },
+    "Wire": [
+      {
+        "type": "ground",
+        "prob": null,
+        "bran": "Y111",
+        "node1": "X04",
+        "node2": "X05",
+        "pos_1": [
+          0,
+          0.1,
+          -1
+        ],
+        "pos_2": [
+          0,
+          0.6,
+          -1
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 1,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "bran": "Y01",
+        "node1": "X02",
+        "node2": "X09",
+        "pos_1": [ 0,-0.4,10],
+        "pos_2": [
+          0,
+          -0.4,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "rs2": null,
+        "rs3": null,
+        "r": 0,
+        "l": 0,
+        "sig": 0.00000058,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+      {
+        "type": "air",
+        "bran": "Y02",
+        "node1": "X03",
+        "node2": "X10",
+        "pos_1": [
+          0,
+          0.1,
+          10
+        ],
+        "pos_2": [
+          0,
+          0.1,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "rs2": null,
+        "rs3": null,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y03",
+        "node1": "X04",
+        "node2": "X11",
+        "pos_1": [
+          0,
+          0.6,
+          10
+        ],
+        "pos_2": [
+          0,
+          0.6,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y04",
+        "node1": "X12",
+        "node2": "X31",
+        "pos_1": [
+          0,
+          -0.4,
+          9.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y05",
+        "node1": "X13",
+        "node2": "X31",
+        "pos_1": [
+          0,
+          0.1,
+          9.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y06",
+        "node1": "X14",
+        "node2": "X13",
+        "pos_1": [
+          0,
+          0.6,
+          9.8
+        ],
+        "pos_2": [
+          0,
+          0.1,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y07",
+        "node1": "X01",
+        "node2": "X31",
+        "pos_1": [
+          0,
+          0,
+          10.5
+        ],
+        "pos_2": [
+          0,
+          0,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y08",
+        "node1": "X15",
+        "node2": "X13",
+        "pos_1": [
+          -0.4,
+          0,
+          9
+        ],
+        "pos_2": [
+          -0.4,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y09",
+        "node1": "X16",
+        "node2": "X19",
+        "pos_1": [
+          0.1,
+          0,
+          9
+        ],
+        "pos_2": [
+          0.1,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y10",
+        "node1": "X17",
+        "node2": "X20",
+        "pos_1": [
+          0.6,
+          0,
+          9
+        ],
+        "pos_2": [
+          0.6,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y11",
+        "node1": "X21",
+        "node2": "X24",
+        "pos_1": [
+          -0.4,
+          0,
+          8.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y12",
+        "node1": "X22",
+        "node2": "X24",
+        "pos_1": [
+          0.1,
+          0,
+          8.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y13",
+        "node1": "X23",
+        "node2": "X22",
+        "pos_1": [
+          0.6,
+          0,
+          8.8
+        ],
+        "pos_2": [
+          0.1,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y14",
+        "node1": "X31",
+        "node2": "X24",
+        "pos_1": [
+          0,
+          0,
+          9.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          8.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y15",
+        "node1": "X24",
+        "node2": "X32",
+        "pos_1": [
+          0,
+          0,
+          8.8
+        ],
+        "pos_2": [
+          0,
+          0,
+          0
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y16",
+        "node1": "X02",
+        "node2": "X15",
+        "pos_1": [
+          0,
+          -0.4,
+          10
+        ],
+        "pos_2": [
+          -0.4,
+          10,
+          -0.4
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y17",
+        "node1": "X03",
+        "node2": "X16",
+        "pos_1": [
+          0,
+          0.1,
+          10
+        ],
+        "pos_2": [
+          0.1,
+          0,
+          9
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "air",
+        "prob": null,
+        "bran": "Y18",
+        "node1": "X04",
+        "node2": "X17",
+        "pos_1": [
+          0,
+          0.6,
+          10
+        ],
+        "pos_2": [
+          0.6,
+          0,
+          9
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "tube",
+        "sheath": {
+        "type": "sheath",
+        "bran": "Y10",
+        "node1": "X53",
+        "node2": "X56",
+        "pos_1": [
+          10,
+          0,
+          0
+        ],
+        "pos_2": [
+          10,
+          0,
+          100
+        ],
+        "oft": 0,
+        "r0": 2,
+        "rs2": 2.05,
+        "rs3": 2.1,
+        "r": 0.0001,
+        "l": 0.0000001,
+        "sig": 1000000,
+        "mur": 50,
+        "epr": 1,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 3,
+        "comments": ""
+      },
+        "core": [
+          {
+        "type": "core",
+        "bran": "Y11",
+        "node1": "X53",
+        "node2": "X57",
+        "pos_1": [
+          10,
+          0,
+          0
+        ],
+        "pos_2": [
+          10,
+          0,
+          100
+        ],
+        "oft": 0,
+        "r0": 0.0087,
+        "rs2": 1.9,
+        "rs3": -5,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+          {
+        "type": "core",
+        "bran": "Y12",
+        "node1": "X54",
+        "node2": "X58",
+        "pos_1": [
+          10,
+          0,
+          0
+        ],
+        "pos_2": [
+          10,
+          0,
+          100
+        ],
+        "oft": 0,
+        "r0": 0.0087,
+        "rs2": 1.9,
+        "rs3": 0,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+          {
+        "type": "core",
+        "bran": "Y13",
+        "node1": "X55",
+        "node2": "X59",
+        "pos_1": [
+          10,
+          0,
+          0
+        ],
+        "pos_2": [
+          10,
+          0,
+          100
+        ],
+        "oft": 0,
+        "r0": 0.0087,
+        "rs2": 1.9,
+        "rs3": 5,
+        "r": 0,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      }
+        ]
+      }
+
+    ],
+    "Lump": {
+      "Bran": "Y01",
+      "Node1": "X01",
+      "Node2": "X02",
+      "type": 0,
+      "value1": null,
+      "value2": null,
+      "value3": null,
+      "value4": null,
+      "value5": null,
+      "list": [],
+      "comments": ""
+    },
+    "GND": {
+      "GLB": null
+    }
+  }
+}

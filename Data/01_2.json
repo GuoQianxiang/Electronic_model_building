@@ -1,0 +1,268 @@
+{
+  "user_id": "01",
+  "case_id": 2,
+  "Tower": {
+    "info": {
+      "id": "1",
+      "type": "10",
+      "Vclass": "10kV",
+      "Theta": 0,
+      "position": [
+        1,
+        0,
+        0
+      ],
+      "theta": 0,
+      "mode_con": 0,
+      "mode_gnd": 0,
+      "pole_height": 10.5,
+      "pole_head": "x01"
+    },
+    "ground": {
+      "glb": 1,
+      "sig": 1e-3,
+      "mur": 1,
+      "epr": 4,
+      "gnd_model": "Lossy",
+      "ionisation_intensity": "weak",
+      "ionisation_model": "isolational"
+    },
+    "Wire": [
+      {
+        "type": "air",
+        "bran": "Y01",
+        "node1": "X01",
+        "node2": "X02",
+        "pos_1": [0, -0.4,10],
+        "pos_2": [
+          0,
+          -0.4,
+          9.8
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "rs2": null,
+        "rs3": null,
+        "r": 1,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+      {
+        "type": "air",
+        "bran": "Y02",
+        "node1": "X02",
+        "node2": "X03",
+        "pos_1": [
+          0,
+          -0.4,
+          10
+        ],
+        "pos_2": [
+          0,
+          0.1,
+          10
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "rs2": null,
+        "rs3": null,
+        "r": 1,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null,
+        "vfid_d": [],
+        "vfid_h": [],
+        "vfid_r": [],
+        "vfid_a": [],
+        "num": 0,
+        "comments": ""
+      },
+      {
+        "type": "ground",
+        "prob": null,
+        "bran": "Y03",
+        "node1": "X04",
+        "node2": "X05",
+        "pos_1": [
+          0,
+          0.1,
+          -1
+        ],
+        "pos_2": [
+          0,
+          0.6,
+          -1
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 1,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "ground",
+        "prob": null,
+        "bran": "Y04",
+        "node1": "X05",
+        "node2": "X06",
+        "pos_1": [
+          0,
+          0.6,
+          -1
+        ],
+        "pos_2": [
+          0,
+          0.7,
+          -1
+        ],
+        "oft": 0,
+        "r0": 0.005,
+        "r": 1,
+        "l": 0,
+        "sig": 58000000,
+        "mur": 1,
+        "epr": 1,
+        "model1": 0,
+        "model2": 2000,
+        "b0": null,
+        "n1": null,
+        "n2": null
+      },
+      {
+        "type": "tube",
+        "sheath":  {
+          "type": "sheath",
+          "prob": null,
+          "bran": "Y10",
+          "node1": "X52",
+          "node2": "X56",
+          "pos_1": [
+            10,
+            0,
+            0
+          ],
+          "pos_2": [
+            10,
+            0,
+            100
+          ],
+          "oft": 0,
+          "r0": 2,
+          "r": 1,
+          "l": 0,
+          "sig": 1e7,
+          "mur": 50,
+          "epr": 1,
+          "rs2": 2.05,
+          "rs3": 2.1,
+          "num": 3
+        },
+        "core":[
+            {
+              "type": "core",
+              "bran": "Y11",
+              "node1": "X53",
+              "node2": "X57",
+              "pos_1": [
+                10,
+                0,
+                0
+              ],
+              "pos_2": [
+                10,
+                0,
+                100
+              ],
+              "oft": 0,
+              "r0": 0.0087,
+              "r": 1,
+              "l": 0,
+              "sig": 58000000,
+              "mur": 1,
+              "epr": 1,
+              "rs2": 1.9,
+              "rs3": -5
+          },
+            {
+              "type": "core",
+              "bran": "Y12",
+              "node1": "X54",
+              "node2": "X58",
+              "pos_1": [
+                10,
+                0,
+                0
+              ],
+              "pos_2": [
+                10,
+                0,
+                100
+              ],
+              "oft": 0,
+              "r0": 0.00087,
+              "r": 1,
+              "l": 0,
+              "sig": 58000000,
+              "mur": 1,
+              "epr": 1,
+              "rs2": 1.9,
+              "rs3": 0
+            },
+            {
+              "type": "core",
+              "bran": "Y13",
+              "node1": "X55",
+              "node2": "X59",
+              "pos_1": [
+                10,
+                0,
+                0
+              ],
+              "pos_2": [
+                10,
+                0,
+                100
+              ],
+              "oft": 0,
+              "r0": 0.0087,
+              "r": 1,
+              "l": 0,
+              "sig": 58000000,
+              "mur": 1,
+              "epr": 1,
+              "rs2": 1.9,
+              "rs3": 5
+            }
+        ]
+
+      }
+
+    ]
+  }
+}
