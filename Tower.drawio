@@ -1,0 +1,148 @@
+<mxfile host="app.diagrams.net" modified="2024-08-15T08:10:04.464Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" version="21.6.8" etag="Zgy-rQ5XAfLrdoJuosCM" type="device">
+  <diagram id="XdBsz8L90yGIPsq2KLx4" name="第 1 页">
+    <mxGraphModel dx="4785" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="deiduE0eZP89rN7ptdmE-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="node7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1170" y="1000" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-780" y="1040" />
+              <mxPoint x="-1170" y="1040" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="node7" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Device.Device&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ ins&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sar&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ txf&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; __repr__(self): &lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-885" y="1080" width="195" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="node6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1180" y="990" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-1010" y="1036" />
+              <mxPoint x="-1180" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="node6" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Ground.Ground&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sig&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ mur&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ epr&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ gnd_model&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;ionisation_intensity&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;+ ionisation_model&lt;/span&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1095" y="1080" width="185" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="node13" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Lightning.Lightning&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ id:int,&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ type:str,&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ strokes&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; add_stroke(self, stroke: Stroke)&lt;br&gt; total_waveform(self, t)&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-500" y="520" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="node5" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Node.Node&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;name：string&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;x ：int&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;y：int&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;z：int&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; __repr__(self)&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1075" y="1318" width="190" height="192" as="geometry" />
+        </mxCell>
+        <mxCell id="node4" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.OHL.OHL&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ wires,&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Info&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ ground&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Measurement&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-840" y="520" width="320" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="node0" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Tower.Tower&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Info: Info&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Wires: Wires&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Lump&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Ground: Ground&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Device: Device&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ MeasurementNode: MeasurementNode&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt;initialize_incidence_matrix(self)&lt;br&gt;initialize_resistance_matrix(self)&lt;br&gt; initialize_inductance_matrix(self)&lt;br&gt; initialize_potential_matrix(self)&lt;br&gt; initialize_capacitance_matrix(self)&lt;br&gt; add_inductance_matrix(self, L)&lt;br&gt; add_potential_matrix(self, P)&lt;br&gt; expand_inductance_matrix(self)&lt;br&gt; update_inductance_matrix_by_coreWires(self)&lt;br&gt; update_inductance_matrix_by_tubeWires(self, sheath_inductance_matrix, Lin, Lx)&lt;br&gt; expand_resistance_matrix(self)&lt;br&gt; update_resistance_matrix_by_tubeWires(self, Rin, Rx)&lt;br&gt; update_capacitance_matrix_by_tubeWires(self, Cin)&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1380" y="490" width="528" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;strokeWidth=2;startSize=7;sourcePerimeterSpacing=1;targetPerimeterSpacing=2;endSize=17;" edge="1" parent="1" source="node9" target="node3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-1532" y="1570" />
+              <mxPoint x="-1300" y="1570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeWidth=1;endSize=12;entryX=1.008;entryY=0.425;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="node9" target="node11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1650" y="1430" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-1837" y="1783" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="node9" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.CoreWire&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ name: str&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ start_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ end_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ offset: float&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ r: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ R: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ L: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ sig: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ mur: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ epr: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;&amp;nbsp;+ VF：matri&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&amp;nbsp;+ inner_offset: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ inner_angle: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; display(self): &lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1700" y="1612" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="node10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1300" y="1530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="node10" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.LumpWire&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ name: str&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ start_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ end_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ offset: float&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ r: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ R: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ L: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ sig: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ mur: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ epr: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;+ VF：matri&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;add_component(self, component):&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1334.5" y="1620" width="384.5" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="node12">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1300" y="1540" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-744" y="1570" />
+              <mxPoint x="-1300" y="1570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="node12" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.OHLWire&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ name: str&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ start_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ end_node: Node&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ offset: float&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ r: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ R: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ L: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ sig: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ mur: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;+ epr: float&lt;/p&gt;&lt;p style=&quot;border-color: var(--border-color); margin: 0px 0px 0px 4px; line-height: 1.6;&quot;&gt;&amp;nbsp;+ VF：matri&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Cir_No&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Phase, phase&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-930" y="1620" width="350" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.622;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="node11" target="node8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node11" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.TubeWire&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;sheath: Wire&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;inner_radius: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;outer_radius: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;inner_num: int&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; add_core_wire(self, wire: CoreWire)&lt;br&gt; display(self)&lt;br&gt; get_coreWires_radii(self)&lt;br&gt; get_coreWires_endNodeZ(self)&lt;br&gt; get_coreWires_sig(self)&lt;br&gt; get_coreWires_mur(self)&lt;br&gt; get_coreWires_epr(self)&lt;br&gt; get_coreWires_innerOffset(self)&lt;br&gt; get_coreWires_innerAngle(self)&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-2200" y="1640" width="360" height="364" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="node3" target="node5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.39;entryY=1.002;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=diamond;endFill=1;strokeWidth=1;endSize=15;" edge="1" parent="1" source="node3" target="node0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node3" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.Wire&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; + name: str&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ start_node: Node&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ end_node: Node&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ offset: float&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ r: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ R: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ L: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sig: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ mur: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ epr: float&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&amp;nbsp;+ VF：matri&lt;br&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; length(self): &lt;br&gt; display(self): &lt;br&gt; __repr__(self): &lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1500" y="1080" width="351" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="node8" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Wires.Wires&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ air_wires=None&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ ground_wires=None&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ a2g_wires=None&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ short_wires=None&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ tube_wires=None&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;&lt;br&gt; display(self): &lt;br&gt; add_air_wire(self, wire): &lt;br&gt; add_ground_wire(self, wire): &lt;br&gt; add_a2g_wire(self, wire): &lt;br&gt; add_short_wire(self, wire): &lt;br&gt; add_tube_wire(self, wire): &lt;br&gt; count(self): &lt;br&gt; get_node_names(self): &lt;br&gt; get_node_coordinates(self): &lt;br&gt; count_distinct_airPoints(self): &lt;br&gt; count_distinct_gndPoints(self): &lt;br&gt; count_distinct_points(self): &lt;br&gt; get_all_nodes(self): &lt;br&gt; get_tubeWires_points_index(self): &lt;br&gt; count_a2gWires(self): &lt;br&gt; count_tubeWires(self): &lt;br&gt; count_gndWires(self): &lt;br&gt; count_airWires(self): &lt;br&gt; get_start_points(self): &lt;br&gt; get_end_points(self): &lt;br&gt; get_radii(self): &lt;br&gt; get_heights(self): &lt;br&gt; get_offsets(self): &lt;br&gt; get_lengths(self): &lt;br&gt; get_resistance(self): &lt;br&gt; get_inductance(self): &lt;br&gt; get_bran_coordinates(self): &lt;br&gt; get_bran_index(self): &lt;br&gt; get_tubeWires_start_index(self): &lt;br&gt; get_tubeWires_index_increment(self): &lt;br&gt; split_long_wires(self, wires, max_length): &lt;br&gt; split_tubewires(self, tubewires, max_length): &lt;br&gt; split_long_wires_all(self, max_length): &lt;br&gt; __repr__(self): &lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-1850" y="630" width="280" height="949" as="geometry" />
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-22" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-885" y="1190" as="sourcePoint" />
+            <mxPoint x="-690" y="1190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-23" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1075" y="1450" as="sourcePoint" />
+            <mxPoint x="-880" y="1450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-24" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1500" y="1370" as="sourcePoint" />
+            <mxPoint x="-1140" y="1370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-25" value="" style="endArrow=none;html=1;rounded=0;entryX=1.01;entryY=0.156;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="node8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1850" y="780" as="sourcePoint" />
+            <mxPoint x="-1645" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-26" value="" style="endArrow=none;html=1;rounded=0;exitX=-0.006;exitY=0.365;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="node11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-2170" y="1770" as="sourcePoint" />
+            <mxPoint x="-1850" y="1770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-27" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.887;entryDx=0;entryDy=0;entryPerimeter=0;exitX=-0.012;exitY=0.882;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="node9" target="node9">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1700" y="1950" as="sourcePoint" />
+            <mxPoint x="-1495" y="1950" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-28" value="" style="endArrow=none;html=1;rounded=0;exitX=-0.002;exitY=0.783;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="node10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1334.5" y="1910" as="sourcePoint" />
+            <mxPoint x="-940" y="1910" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deiduE0eZP89rN7ptdmE-29" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Model.Cable.Cable&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Info&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Wires&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Ground&lt;/p&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ Measurement&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="-210" y="520" width="250" height="220" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
