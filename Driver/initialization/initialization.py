@@ -5,9 +5,15 @@ from Model.Wires import Wire, Wires, CoreWire, TubeWire
 from Model.Ground import Ground
 from Model.Tower import Tower
 
+def connect_nodes(nodes, node1):
+    for node in nodes:
+        name = node.name
+        if node1.name == name:
+            return node
+    return False
 
 # initialize wire in tower
-def initialize_wire(wire):
+def initialize_wire(wire, nodes):
     bran = wire['bran']
     node_name_start = wire['node1']
     pos_start = wire['pos_1']
@@ -15,6 +21,19 @@ def initialize_wire(wire):
     pos_end = wire['pos_2']
     node_start = Node(node_name_start, pos_start[0], pos_start[1], pos_start[2])
     node_end = Node(node_name_end, pos_end[0], pos_end[1], pos_end[2])
+    connect_start = connect_nodes(nodes,node_start)
+    connect_end = connect_nodes(nodes, node_end)
+
+    if connect_start:
+        node_start = connect_start
+    else:
+        nodes.append(node_start)
+
+    if connect_end:
+        node_end = connect_end
+    else:
+        nodes.append(node_end)
+
     offset = wire['oft']
     radius = wire['r0']
     R = wire['r']
@@ -29,10 +48,6 @@ def initialize_wire(wire):
         np.arange(100, 1000, 100),
         np.arange(1000, 10000, 1000),
         np.arange(10000, 100000, 10000),
-        # np.arange(100000, 1000000, 100000),
-        # np.arange(1000000, 10000000, 1000000),
-        # np.arange(10000000, 100000000, 10000000),
-        # np.arange(100000000, 1000000000, 100000000)
     ])
     VF = {'odc': 10,
           'frq': frq}
@@ -55,7 +70,6 @@ def initialize_ground(ground_dic):
 
 
 def initialize_tower(file_name, max_length):
-    print("Starting Tower initialization...")
     json_file_path = "Data/" + file_name + ".json"
     # 0. read json file
     with open(json_file_path, 'r') as j:
@@ -64,26 +78,26 @@ def initialize_tower(file_name, max_length):
     # 1. initialize wires
     wires = Wires()
     tube_wire = TubeWire(None, None, None, None)
+    nodes = []
     for wire in load_dict['Tower']['Wire']:
-        print(wire)
 
         # 1.1 initialize air wire
         if wire['type'] == 'air':
-            wire_air = initialize_wire(wire)
+            wire_air = initialize_wire(wire, nodes)
             wires.add_air_wire(wire_air)  # add air wire in wires
 
         # 1.2 initialize ground wire
         elif wire['type'] == 'ground':
-            wire_ground = initialize_wire(wire)
+            wire_ground = initialize_wire(wire, nodes)
             wires.add_ground_wire(wire_ground)  # add ground wire in wires
 
         # 1.3 initialize tube
         elif wire['type'] == 'tube':
-            sheath_wire = initialize_wire(wire['sheath'])
+            sheath_wire = initialize_wire(wire['sheath'], nodes)
             tube_wire = TubeWire(sheath_wire, wire['sheath']['rs2'], wire['sheath']['rs3'], wire['sheath']['num'])
 
             for core in wire['core']:
-                core_wire = initialize_wire(core)
+                core_wire = initialize_wire(core, nodes)
                 tube_wire.add_core_wire(core_wire)
 
             wires.add_tube_wire(tube_wire)  # add tube in wires
@@ -91,7 +105,7 @@ def initialize_tower(file_name, max_length):
     # ---对所有线段进行切分----
     wires.display()
     wires.split_long_wires_all(max_length)
-    
+
     # 将表皮线段添加到空气线段集合中
     for tubeWire in wires.tube_wires:
         wires.add_air_wire(tubeWire.sheath)  # sheath wire is in the air, we need to calculate it in air part.
@@ -104,4 +118,3 @@ def initialize_tower(file_name, max_length):
     tower = Tower(None, wires, tube_wire, None, ground, None, None)
     print("Tower loaded.")
     return tower
-
