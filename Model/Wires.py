@@ -475,6 +475,34 @@ class Wires:
                 all_nodes[core_wire.end_node] = True
 
         return list(all_nodes)
+    
+
+    def get_tubeWires_points_index(self):
+        """
+        获取管状线段在切分后 表皮和芯线起点终点的索引
+
+        参数:
+        wires (Wires): Wires 对象
+
+        返回:
+        indices(list): 二维矩阵, 按照切分的批, 分别表示一批表皮和芯线的点的索引集合
+        """
+        all_nodes = self.get_all_nodes()
+        node_to_index = {node: i for i, node in enumerate(all_nodes)}
+        indices = []
+        for tubewire in self.tube_wires:
+            index = []
+            index.append(node_to_index[tubewire.sheath.start_node])
+
+            for core_wire in tubewire.core_wires:
+                index.append(node_to_index[core_wire.start_node])
+            indices.append(index)
+        index = []
+        index.append(node_to_index[self.tube_wires[len(self.tube_wires)-1].sheath.end_node])
+        for core_wire in self.tube_wires[len(self.tube_wires)-1].core_wires:
+                index.append(node_to_index[core_wire.end_node])
+        indices.append(index)
+        return indices
 
 
     def count_a2gWires(self):
@@ -747,6 +775,7 @@ class Wires:
                 # 切分 sheath
                 sheath_start_point = sheath_start_node
                 sheath_end_point = sheath_end_node
+                core_wires_middle_nodes = collections.deque()
                 for i in range(num_segments):
                     middle_node = Node(name=f"{sheath.name}_MiddleNode_{i+1}",
                                        x = sheath_start_point.x + (i+1)*dx,
@@ -775,10 +804,7 @@ class Wires:
                         end_point = core_wire.end_node
                         new_core_wire = CoreWire(
                             name=f"{core_wire.name}_Splited_{i+1}",
-                            start_node=start_point if i == 0 else Node(name=f"{core_wire.name}_MiddleNode_{i}",
-                                                                       x = start_point.x+ i*dx,
-                                                                       y = start_point.y+ i*dy,
-                                                                       z = start_point.z+ i*dz),
+                            start_node=start_point if i == 0 else core_wires_middle_nodes.popleft(),
                             end_node=end_point if i == num_segments-1 else Node(name=f"{core_wire.name}_MiddleNode_{i+1}",
                                                                                 x = start_point.x+ (i+1)*dx,
                                                                                 y = start_point.y+ (i+1)*dy,
@@ -795,6 +821,7 @@ class Wires:
                             inner_angle=core_wire.inner_angle
                         )
                         new_core_wires.append(new_core_wire)
+                        core_wires_middle_nodes.append(new_core_wire.end_node)
 
                     new_tubewire = TubeWire(
                         sheath=new_sheath,

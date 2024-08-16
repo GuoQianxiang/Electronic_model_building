@@ -5,37 +5,42 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(curPath)
 
 from Info import Info
-from Wires import Wires
-# from Lump import Circuit
+from Wires import Wires, TubeWire
 from Ground import Ground
 from Device import Device
 from Node import MeasurementNode
 import numpy as np
 from scipy.linalg import block_diag
-from Utils.Math import expand_matrix, copy_and_expand_matrix, update_matrix
+from Utils.Matrix import expand_matrix, copy_and_expand_matrix, update_matrix, update_and_sum_matrix
 
 
 class Tower:
-    def __init__(self, Info: Info, Wires: Wires, Lump, Ground: Ground, Device: Device,
+    def __init__(self, Info: Info, Wires: Wires, tubeWire: TubeWire, Lump, Ground: Ground, Device: Device,
                  MeasurementNode: MeasurementNode):
         """
         初始化杆塔对象
 
         参数:
-        Info (TowerInfo): 杆塔自描述信息对象
-        Wires (Wires): 杆塔线段对象集合
-        Lump (Circuit): 集中参数对象集合
-        Ground (Ground): 杆塔地线对象集合
-        Device (Device): 杆塔设备对象集合
-        MeasurementNode (MeasurementNode): 杆塔测量节点对象集合
+        info (TowerInfo): 杆塔自描述信息对象
+        wires (Wires): 杆塔线段对象集合
+        tubeWire (TubeWire): 管状线段(杆塔中的管状线段唯一, 此处留存初始未切分的管状线段, 方便后续使用, 切分后的多个管状线存储于wires中)
+        lump (Circuit): 集中参数对象集合
+        ground (Ground): 杆塔地线对象集合
+        device (Device): 杆塔设备对象集合
+        measurementNode (MeasurementNode): 杆塔测量节点对象集合
 
         无需传入的参数：
         nodesList (list): 杆塔节点名字列表
         nodesPositions (list): 杆塔节点坐标对列表
         incidence_matrix (numpy.ndarray, Num(wires) * Num(points)): 邻接矩阵
+        resistance_matrix (numpy.ndarray, Num(wires) * Num(wires)): 阻抗矩阵
+        inductance_matrix (numpy.ndarray, Num(wires) * Num(wires)): 电感矩阵
+        potential_matrix (numpy.ndarray, Num(points) * Num(points)): 电位矩阵
+        capacitance_matrix (numpy.ndarray, Num(points) * Num(points)): 电容矩阵
         """
         self.info = Info
         self.wires = Wires
+        self.tubeWire = tubeWire
         self.lump = Lump
         self.ground = Ground
         self.device = Device
@@ -48,13 +53,16 @@ class Tower:
         self.incidence_matrix = np.zeros((self.wires.count(), self.wires.count_distinct_points()))
         # 阻抗矩阵
         self.resistance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(),
-                                           self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+                                           self.wires.count_airWires() + self.wires.count_gndWires()))
         # 电感矩阵
         self.inductance_matrix = np.zeros((self.wires.count_airWires() + self.wires.count_gndWires(),
-                                           self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+                                           self.wires.count_airWires() + self.wires.count_gndWires()))
         # 电位矩阵
         self.potential_matrix = np.zeros((self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints(),
                                           self.wires.count_distinct_airPoints() + self.wires.count_distinct_gndPoints()))
+        # 电容矩阵
+        self.capacitance_matrix = np.zeros((self.wires.count_distinct_points(), self.wires.count_distinct_points()))
+
 
     def initialize_incidence_matrix(self):
         """
@@ -102,6 +110,9 @@ class Tower:
         self.inductance_matrix = np.diag((self.wires.get_inductance() * self.wires.get_lengths()).flatten())
 
     def initialize_potential_matrix(self):
+        pass
+
+    def initialize_capacitance_matrix(self):
         pass
 
     def add_inductance_matrix(self, L):
@@ -164,3 +175,11 @@ class Tower:
         for i in range(len(self.wires.tube_wires)):
             self.resistance_matrix = update_matrix(self.resistance_matrix, index, R0 + Rx + Rss)
             index = [x + y for x, y in zip(index, increment)]
+
+    def update_capacitance_matrix_by_tubeWires(self, Cin):
+        # 更新电容矩阵
+        C0 = update_and_sum_matrix(Cin)
+        indices = self.wires.get_tubeWires_points_index()
+        for i in range(len(indices)):
+            # 将C矩阵相应位置的点 更新为C0相应位置的数据
+            self.capacitance_matrix = update_matrix(self.capacitance_matrix, indices[i], 0.5*C0 if i==0 or i==len(indices)-1 else C0)#与外界相连接的部分，需要折半
